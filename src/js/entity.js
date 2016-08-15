@@ -5,8 +5,8 @@ G.Entity = function(opt){
     this.xr = 0;
     this.yr = 0;
     
-    this.xx = opt.x | 0;
-    this.yy = opt.y | 0;
+    this.xx = 0;
+    this.yy = 0;
     
     this.dx = 0;
     this.dy = 0;
@@ -15,7 +15,7 @@ G.Entity = function(opt){
     this.ddy = 0;
     
     this.ox = 0; //previous frame x
-    this.oy = 0; //previous frame y
+    this.oy = 0; //previous frame y -
     
     this.radius = 0;
     this.gravity = 0;
@@ -32,7 +32,6 @@ G.Entity = function(opt){
 G.Entity.prototype.die = function(e) {
     e.dead = true;
     G.ALL.splice(G.ALL.indexOf(e), 1);
-    //G.mobs.splice(G.mobs.indexOf(e), 1);
 }
 
 G.Entity.prototype.setCoords = function(x,y) {
@@ -45,41 +44,12 @@ G.Entity.prototype.setCoords = function(x,y) {
     };
 
 G.Entity.prototype.hasCollision = function(cx,cy) {
-    if(this.dead)return false;
-    if(this == G.player){
         if( (this.cx<1 && this.xr < .5) || this.cx>=G.const.WIDTH)
             return true;
         else if(this.cy<1 && this.yr < .5 || this.cy>=G.const.HEIGHT ){
             return true;
         }
-        else if( G.player.map[cy] == undefined || G.player.map[cy][cx] == undefined ) {
-            return true;
-        }
-        else return (G.player.map[cy][cx]);
-        
-    }
-    else if(this.isBullet) {
-         if( (this.cx<1 && this.xr < .5) || this.cx>=G.const.WIDTH)
-            return true;
-        else if(this.cy<1 && this.yr < .5 || this.cy>=G.const.HEIGHT ){
-            return true;
-        }
-        else if( G.player.map[cy] == undefined || G.player.map[cy][cx] == undefined ) {
-            return true;
-        }
-        else return (G.player.flipped ? G.player.map[cy][cx] : G.Map[cy][cx]) ;
-    }
-    else {
-        if( (this.cx<1 && this.xr < .5) || this.cx>=G.const.WIDTH)
-            return true;
-        else if(this.cy<1 && this.yr < .5 || this.cy>=G.const.HEIGHT ){
-            return true;
-        }
-        else if( (G.Map[cy]) == undefined  || G.Map[cy][cx] == undefined ) {
-            return true;
-        }
-        else return (G.Map[cy][cx]);
-    }
+        else return (0); //eventually return map coordinates.
 };
 
 G.Entity.prototype.overlaps = function(e) { //e is another entity
@@ -112,8 +82,7 @@ G.Entity.prototype.update = function() {
         
         
         var gravity = this.gravity;
-         
-        
+
         //X component
         this.xr += this.dx;
         this.dx *= this.frictX;
@@ -156,43 +125,36 @@ G.Entity.prototype.update = function() {
         }
         
         //object collision handling--------------------
-        
 
         for(var i = 0; i < G.ALL.length; i++) {
             //console.log('in collision check loop');
             var e = G.ALL[i];
             if(!e.dead){
                 if(e.collides){
+                //broad phase collision detection
                 if(e != this && Math.abs(this.cx-e.cx) <= 1 && Math.abs(this.cy-e.cy) <= 1 ){
-                    var dist = Math.sqrt( (e.xx-this.xx) * (e.xx-this.xx) + (e.yy-this.yy)*(e.yy-this.yy) );
-                if(dist <= this.radius + e.radius) {
-                    if(this == G.player){ //enemies die when touch player
-                        G.Entity.prototype.die(e);
+
+                    //if the cells are close enough, then we break out the actual distance check
+                    if(this.overlaps(e)) {
+                        var ang = Math.atan2(e.yy-this.yy, e.xx-this.xx);
+                        var force = 0.03;
+                        var repelPower = (this.radius + e.radius - dist) / (this.radius + e.radius);
+                        this.dx -= Math.cos(ang) * repelPower * force;
+                        this.dy -= Math.sin(ang) * repelPower * force;
+                        e.dx += Math.cos(ang) * repelPower * force;
+                        e.dy += Math.sin(ang) * repelPower * force;
                     }
-                    //console.log('touching');
-                    var ang = Math.atan2(e.yy-this.yy, e.xx-this.xx);
-                    var force = 0.03;
-                    var repelPower = (this.radius + e.radius - dist) / (this.radius + e.radius);
-                    this.dx -= Math.cos(ang) * repelPower * force;
-                    this.dy -= Math.sin(ang) * repelPower * force;
-                    e.dx += Math.cos(ang) * repelPower * force;
-                    e.dy += Math.sin(ang) * repelPower * force;
+
                 }
-            }
-            
             }
                 
             }
 
         }
         //----------------------------------------------
-        
-       
-       
-      
+
         //update actual pixel coordinates:
-        
-       
+
         this.xx = Math.floor((this.cx + this.xr)*G.const.GRID);
         this.yy = Math.floor((this.cy + this.yr)*G.const.GRID);
         this.ddx = (this.cx + this.xr)*G.const.GRID - this.ox;

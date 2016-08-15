@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		watch: {
+
 			scripts: {
 				files: ['src/js/**/*.js'],
 				tasks: ['uglify:development'],
@@ -12,6 +13,7 @@ module.exports = function(grunt) {
 				files: 'src/css/**/*.less',
 				tasks: ['less:development']
 			}
+
 		},
 		express:{
 			all:{
@@ -33,7 +35,9 @@ module.exports = function(grunt) {
 					[
 						'src/js/const.js',
 						'src/js/util.js',
-						'src/js/stats.js',
+						//'src/js/stats.js',
+						'src/js/pubsub.js',
+						'src/js/statemachine.js',
 
 						'src/js/sonantx.js',
 						'src/js/input.js',
@@ -66,15 +70,15 @@ module.exports = function(grunt) {
 						[
 						'src/js/const.js',
 						'src/js/util.js',
-						'src/js/stats.js',
+						//'src/js/stats.js',
+						'src/js/pubsub.js',
+						'src/js/statemachine.js',
 
 						'src/js/sonantx.js',
 						'src/js/input.js',
 						'src/js/map.js',
 						'src/js/entity.js',
 
-						'src/js/mobs.js',
-						'src/js/enemy.js',
 						'src/js/assets.js',
 						'src/js/text.js',
 						
