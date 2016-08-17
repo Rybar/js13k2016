@@ -1,43 +1,42 @@
-/**
- * Created by ryan on 8/14/16.
- */
+Game = function() {
+    canvas = document.querySelector('#game');
+    ctx = canvas.getContext('2d');
 
-G.init = function() {
-    G.canvas = document.querySelector('#game');
-    G.ctx = G.canvas.getContext('2d');
-    G.ctx.fillStyle = "#ff0000";
-    G.ctx.fillRect(64,64,64,64);
+    ctx.fillStyle = "#ff0000";
+    ctx.fillRect(64,64,64,64);
 
-    G.EVENT = {
-        playerHurt: 0,
-        playerHit: 1
+   var g = StateMachine.create({
+            initial: "init",
 
-    }
-    //todo:setup state machine
-
-    G.cfg = {
-
-        state: {
-            initial: 'boot',
             events: [
-            { name: 'ready',  from: 'boot',          to: 'menu' },
-            { name: 'play',   from: 'menu',          to: 'game' },
-            ]
-        },
+                {name: 'boot', from: 'init', to: 'boot'},
+                {name: 'ready', from: 'boot', to: 'menu' },
+                {name: 'play', from: 'menu', to: 'game' },
+                {name: 'lose', from: 'game', to: 'gameover' },
+            ],
 
-        pubsub: [
+            callbacks: {
+                onbeforeboot: function(event, from, to) {
+                    console.log('booting up');
+                },
 
-            { event: G.EVENT.playerHurt, action: function(player, by, nuke)     {this.onPlayerHurt(player, by, nuke); } },
-            {},
-       ]
+                onboot: function(event, from, to) {
+                    console.log('booted!');
+                },
 
-    }
+                onready: function(event, from, to) {
+                    ctx.fillStyle = "#ffff00";
+                    ctx.fillRect(128,64,64,64);
+                },
+                ongame: function(event, from, to) {
+                    ctx.fillStyle = "#00ff00";
+                    ctx.fillRect(128+64,64,64,64);
+                }
+            }
+        });
+    console.log(g);
 
-    //todo: finish analyzing jake's gauntlet setup
-    G.PubSub.enable(cfg.pubsub, G);
+    g.boot();
+    return g;
+}();
 
-
-    console.log('initialized');
-
-};
-window.onload=G.init;

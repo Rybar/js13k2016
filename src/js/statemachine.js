@@ -196,32 +196,54 @@
 
     //===========================================================================
 
-    //======
-    // NODE
-    //======
-    if (typeof exports !== 'undefined') {
-        if (typeof module !== 'undefined' && module.exports) {
-            exports = module.exports = StateMachine;
-        }
-        exports.StateMachine = StateMachine;
-    }
-    //============
-    // AMD/REQUIRE
-    //============
-    else if (typeof define === 'function' && define.amd) {
-        define(function(require) { return StateMachine; });
-    }
     //========
     // BROWSER
     //========
-    else if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined') {
         window.StateMachine = StateMachine;
     }
-    //===========
-    // WEB WORKER
-    //===========
-    else if (typeof self !== 'undefined') {
-        self.StateMachine = StateMachine;
-    }
+
 
 }());
+
+(function(){
+
+    var PubSub = {
+
+        enable: function(cfg, on) {
+
+            var n, max;
+
+            on.subscribe = function(event, callback) {
+                this.subscribers = this.subscribers || {};
+                this.subscribers[event] = this.subscribers[event] || [];
+                this.subscribers[event].push(callback);
+            },
+
+                on.publish = function(event) {
+                    if (this.subscribers && this.subscribers[event]) {
+                        var subs = this.subscribers[event],
+                            args = [].slice.call(arguments, 1),
+                            n, max;
+                        for(n = 0, max = subs.length ; n < max ; n++)
+                            subs[n].apply(on, args);
+                    }
+                }
+
+            if (cfg) {
+                for(n = 0, max = cfg.length ; n < max ; n++)
+                    on.subscribe(cfg[n].event, cfg[n].action);
+            }
+
+        }
+
+    }
+
+    //========
+    // BROWSER
+    //========
+    if (typeof window !== 'undefined') {
+        window.PubSub = PubSub;
+    }
+
+})();

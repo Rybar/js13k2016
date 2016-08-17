@@ -2,7 +2,7 @@
 
 //sounds generated using sonant-live composer
 
-G.assets = {
+assets = {
 
     song: {
         "songLen": 123,
