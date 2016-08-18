@@ -1,5 +1,5 @@
 (function() {
-	var Text = {
+	var Txt = {
 		textLine: function (opt) {
 		if (!opt.glitchFactor) opt.glitchFactor = 0;
 		if (!opt.glitchChance) opt.glitchChance = 0;
@@ -82,29 +82,32 @@
 					y = Math.floor(y);
 				}
 
-				G.textLine({
+				this.textLine({
 					ctx: opt.ctx,
-					x: x,
-					y: y,
-					text: line,
-					hspacing: opt.hspacing,
-					scale: opt.scale,
-					glitchChance: opt.glitchChance,
-					glitchFactor: opt.glitchFactor
-				});
-			}
-		}
+		x: x,
+		y: y,
+		text: line,
+		hspacing: opt.hspacing,
+		scale: opt.scale,
+		glitchChance: opt.glitchChance,
+		glitchFactor: opt.glitchFactor
+});
+}
+}
 
-		return {
-			sx: sx,
-			sy: sy,
-			cx: cx,
-			cy: cy,
-			ex: ex,
-			ey: ey,
-			width: textWidth,
-			height: textHeight
-		}
-	}
+return {
+	sx: sx,
+	sy: sy,
+	cx: cx,
+	cy: cy,
+	ex: ex,
+	ey: ey,
+	width: textWidth,
+	height: textHeight
+}
+}
 };
+	if (typeof window !== 'undefined') {
+		window.Game.Txt = this.Txt;
+	}
 })();

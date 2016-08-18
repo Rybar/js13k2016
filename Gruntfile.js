@@ -33,20 +33,11 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js': 
 					[
-						'src/js/const.js',
-						'src/js/util.js',
-						//'src/js/stats.js',
-						'src/js/pubsub.js',
+						'src/js/init.js',
 						'src/js/statemachine.js',
-
-						'src/js/sonantx.js',
-						'src/js/input.js',
-						'src/js/map.js',
-						'src/js/entity.js',
-						'src/js/assets.js',
-						'src/js/text.js',
-
 						'src/js/main.js',
+						'src/js/sonantx.js',
+						'src/js/entity.js'
 						]
 				},
 			},
@@ -68,24 +59,15 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js':
 						[
-						'src/js/const.js',
-						'src/js/util.js',
-						//'src/js/stats.js',
-						'src/js/pubsub.js',
+						'src/js/init.js',
 						'src/js/statemachine.js',
-
+						'src/js/main.js',
 						'src/js/sonantx.js',
-						'src/js/input.js',
-						'src/js/map.js',
 						'src/js/entity.js',
 
-						'src/js/assets.js',
-						'src/js/text.js',
-						
-						'src/js/main.js',
-						
-						
-						
+
+
+
 						]
 				},
 			}

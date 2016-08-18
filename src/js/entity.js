@@ -1,5 +1,5 @@
 /*global G */
-G.Entity = function(opt){
+Game.Entity = function(opt){
     this.cx = 0;
     this.cy = 0;
     this.xr = 0;
@@ -29,30 +29,30 @@ G.Entity = function(opt){
     
 };
 
-G.Entity.prototype.die = function(e) {
+Game.Entity.prototype.die = function(e) {
     e.dead = true;
-    G.ALL.splice(G.ALL.indexOf(e), 1);
+    Game.ALL.splice(Game.ALL.indexOf(e), 1);
 }
 
-G.Entity.prototype.setCoords = function(x,y) {
+Game.Entity.prototype.setCoords = function(x,y) {
         this.xx = x;
         this.yy = y;
-        this.cx = Math.floor(this.xx/G.const.GRID);
-        this.cy = Math.floor(this.yy/G.const.GRID);
-        this.xr = (this.xx - this.cx*G.const.GRID) / G.const.GRID;
-        this.xy = (this.yy - this.cy*G.const.GRID) / G.const.GRID;
+        this.cx = Math.floor(this.xx/Game.const.GRID);
+        this.cy = Math.floor(this.yy/Game.const.GRID);
+        this.xr = (this.xx - this.cx*Game.const.GRID) / Game.const.GRID;
+        this.xy = (this.yy - this.cy*Game.const.GRID) / Game.const.GRID;
     };
 
-G.Entity.prototype.hasCollision = function(cx,cy) {
-        if( (this.cx<1 && this.xr < .5) || this.cx>=G.const.WIDTH)
+Game.Entity.prototype.hasCollision = function(cx,cy) {
+        if( (this.cx<1 && this.xr < .5) || this.cx>=Game.const.WIDTH)
             return true;
-        else if(this.cy<1 && this.yr < .5 || this.cy>=G.const.HEIGHT ){
+        else if(this.cy<1 && this.yr < .5 || this.cy>=Game.const.HEIGHT ){
             return true;
         }
         else return (0); //eventually return map coordinates.
 };
 
-G.Entity.prototype.overlaps = function(e) { //e is another entity
+Game.Entity.prototype.overlaps = function(e) { //e is another entity
     var maxDist = this.radius + e.radius;
     var distSqr = (e.xx - this.xx)*(e.xx-this.xx) + (e.yy - this.yy)*(e.yy-this.yy);
     if(distSqr <= maxDist*maxDist )
@@ -61,22 +61,22 @@ G.Entity.prototype.overlaps = function(e) { //e is another entity
         return false;
 };
     
-G.Entity.prototype.onGround = function() {
+Game.Entity.prototype.onGround = function() {
     return this.hasCollision(this.cx, this.cy+1) && this.yr>=0.5;
 };
 
-G.Entity.prototype.onCeiling = function() {
+Game.Entity.prototype.onCeiling = function() {
     return this.hasCollision(this.cx, this.cy-1) && this.yr<=0.5;
 };
 
-G.Entity.prototype.onWallLeft = function() {
+Game.Entity.prototype.onWallLeft = function() {
     return this.hasCollision(this.cx-1, this.cy) && this.xr<=0.5;
 }
-G.Entity.prototype.onWallRight = function() {
+Game.Entity.prototype.onWallRight = function() {
     return this.hasCollision(this.cx+1, this.cy) && this.xr>=0.5;
 }
     
-G.Entity.prototype.update = function() {
+Game.Entity.prototype.update = function() {
     
     if(!this.dead){
         
@@ -126,9 +126,9 @@ G.Entity.prototype.update = function() {
         
         //object collision handling--------------------
 
-        for(var i = 0; i < G.ALL.length; i++) {
+        for(var i = 0; i < Game.ALL.length; i++) {
             //console.log('in collision check loop');
-            var e = G.ALL[i];
+            var e = Game.ALL[i];
             if(!e.dead){
                 if(e.collides){
                 //broad phase collision detection
@@ -155,12 +155,12 @@ G.Entity.prototype.update = function() {
 
         //update actual pixel coordinates:
 
-        this.xx = Math.floor((this.cx + this.xr)*G.const.GRID);
-        this.yy = Math.floor((this.cy + this.yr)*G.const.GRID);
-        this.ddx = (this.cx + this.xr)*G.const.GRID - this.ox;
-        this.ddy = (this.cy + this.yr)*G.const.GRID - this.oy;
-        this.ox = (this.cx + this.xr)*G.const.GRID;
-        this.oy = (this.cy + this.yr)*G.const.GRID;
+        this.xx = Math.floor((this.cx + this.xr)*Game.const.GRID);
+        this.yy = Math.floor((this.cy + this.yr)*Game.const.GRID);
+        this.ddx = (this.cx + this.xr)*Game.const.GRID - this.ox;
+        this.ddy = (this.cy + this.yr)*Game.const.GRID - this.oy;
+        this.ox = (this.cx + this.xr)*Game.const.GRID;
+        this.oy = (this.cy + this.yr)*Game.const.GRID;
         
             
     }
