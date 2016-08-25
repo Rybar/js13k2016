@@ -436,6 +436,5 @@ sonantx.MusicGenerator.prototype.createAudioBuffer = function(callBack) {
     });
 };
 })();
-Game.sonantx = sonantx;
 
 //---------END SONANT-X-----

@@ -35,10 +35,8 @@ module.exports = function(grunt) {
 					[
 						'src/js/init.js',
 						'src/js/statemachine.js',
-						'src/js/main.js',
-						'src/js/sonantx.js',
-						'src/js/entity.js'
-						]
+						'src/js/main.js'
+					]
 				},
 			},
 			compressed: {
@@ -59,11 +57,9 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js':
 						[
-						'src/js/init.js',
-						'src/js/statemachine.js',
-						'src/js/main.js',
-						'src/js/sonantx.js',
-						'src/js/entity.js',
+							'src/js/init.js',
+							'src/js/statemachine.js',
+							'src/js/main.js'
 
 
 
