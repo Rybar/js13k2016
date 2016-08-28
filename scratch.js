@@ -1,37 +1,36 @@
-var G = function(){};
-G.Entity = function(){
-    this.cx = 0;
-    this.cy = 0;
-    this.xr = 0;
-    this.yr = 0;
-    
-    this.xx = 0;
-    this.yy = 0;
-    
-    this.dx = 0;
-    this.dy = 0;
-    
-    this.radius = 0;
-    this.gravity = 0;
-};
+sounds = {
 
-G.Entity.prototype.setCoords = function(x,y) {
-        this.xx = x;
-        this.yy = y;
-        this.cx = Math.floor(this.xx/G.const.GRID);
-        this.cy = Math.floor(this.yy/G.const.GRID);
-        this.xr = (this.xx - this.cx*G.const.GRID) / G.const.GRID;
-        this.xy = (this.yy - this.cy*G.const.GRID) / G.const.GRID;
-    };
-    
-//Other prototype methods....
 
-// Now I'd like to create new objects using Entity's prototype. 
-// but I'm doing something wrong;
+    'engine sound 1': {
+        "osc1_oct": 7,
+        "osc1_det": 0,
+        "osc1_detune": 0,
+        "osc1_xenv": 1,
+        "osc1_vol": 192,
+        "osc1_waveform": 0,
+        "osc2_oct": 7,
+        "osc2_det": 0,
+        "osc2_detune": 39,
+        "osc2_xenv": 1,
+        "osc2_vol": 192,
+        "osc2_waveform": 0,
+        "noise_fader": 0,
+        "env_attack": 193767,
+        "env_sustain": 118467,
+        "env_release": 200000,
+        "env_master": 192,
+        "fx_filter": 4,
+        "fx_freq": 2962,
+        "fx_resonance": 143,
+        "fx_delay_time": 1,
+        "fx_delay_amt": 35,
+        "fx_pan_freq": 1,
+        "fx_pan_amt": 255,
+        "lfo_osc1_freq": 0,
+        "lfo_fx_freq": 0,
+        "lfo_freq": 3,
+        "lfo_amt": 0,
+        "lfo_waveform": 1
+    }
 
-G.Enemy = function(){} //so far so good...
-G.Enemy.prototype = G.Entity();  // no errors
-G.Enemy.prototype.update = function() {}  //
-
-G.Enemy.update()  //throws undefined error.  
-
+}
