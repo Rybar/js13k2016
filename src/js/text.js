@@ -10,7 +10,7 @@
 			var textLength = opt.text.length,
 				size = 5;
 			for (var i = 0; i < textLength; i++) {
-				var letter = GAME.assets.letters[( opt.text.charAt(i) )] || GAME.assets.letters['unknown'];
+				var letter = GAME.Assets.letters[( opt.text.charAt(i) )] || GAME.assets.letters['unknown'];
 				for (var y = 0; y < size; y++) {
 					//var g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
 					for (var x = 0; x < size; x++) {

@@ -1,3 +1,5 @@
+//todo: split out into separate modules
+//title screen and
 (function(g){
 
     g.states =  {
@@ -5,21 +7,26 @@
         boot: {
 
             onenter: function() {
-                //if(!GAME.sounds)GAME.initAudio();
+                //-if(!GAME.sounds)GAME.initAudio(); //off for now, placeholder song works
             },
 
             render: function(){
-                ctx.clearRect(0,0,512,512);
+
+                g.clear(GAME);
+                g.ALL = [];
+
+                ctx.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
+                g.ctxui.fillStyle = "#0f0";
                 GAME.Txt.text({
-                    ctx: ctx,
-                    x: 64,
-                    y: 128,
+                    ctx: g.ctxui,
+                    x: 20,
+                    y: 20,
                     text: "READY...PRESS A",
-                    hspacing: 5,
+                    hspacing: 2,
                     vspacing: 1,
                     halign: 'top',
                     valign: 'left',
-                    scale: 2,
+                    scale: 1,
                     snap: 1,
                     render: 1,
                     glitchChance: .0,
@@ -43,18 +50,23 @@
         menu: {
             render: function(){
 
-                ctx.clearRect(0,0,512,512);
+                g.clear(GAME);
 
+
+                g.ctxbg.fillStyle = "#444";
+
+
+                ctx.fillStyle = "#fff";
                 GAME.Txt.text({
-                    ctx: ctx,
-                    x: 64,
-                    y: 128,
-                    text: "GAMEY GAME\nPRESS S TO CONTINUE",
-                    hspacing: 5,
+                    ctx: g.ctxui,
+                    x: 20,
+                    y: 20,
+                    text: "GLITCHBOX\nPRESS S TO CONTINUE",
+                    hspacing: 2,
                     vspacing: 1,
                     halign: 'top',
-                    valign: 'left',
-                    scale: 4,
+                    valign: 'center',
+                    scale: 1,
                     snap: 1,
                     render: 1,
                     glitchChance: .01,
@@ -83,11 +95,23 @@
 
                     case 'play':
 
-                        GAME.player = GAME.Player();
+                        GAME.player = GAME.Player({
+                            x: 100,
+                            y: 100
+                        });
                         GAME.ALL.push(GAME.player);
 
-                        GAME.enemy = GAME.Enemy();
-                        GAME.ALL.push(GAME.enemy);
+                        var enemies = 50;
+                        while(enemies--){
+                           GAME.enemy = GAME.Enemy({
+                                x: Math.floor(Math.random() * 200),
+                                y: Math.floor(Math.random() * 200),
+                                radius: (Math.floor(Math.random() * 5)) + 5
+                                 });
+                            GAME.ALL.push(GAME.enemy);
+
+                        }
+
 
                         break;
                 }
@@ -96,20 +120,37 @@
 
             render: function(){
 
-                ctx.clearRect(0,0,512,512);
+                g.clear(GAME);
+
+                g.ctxbg.fillStyle = "#333";
+                GAME.Txt.text({
+                    ctx: g.ctxbg,
+                    x: 0,
+                    y: 0,
+                    text: "xzxz\nzxzx\nxzxz\nzxzx",
+                    hspacing: 0,
+                    vspacing: 0,
+                    halign: 'top',
+                    valign: 'left',
+                    scale: 10,
+                    snap: 1,
+                    render: 1,
+                    glitchChance: 0,
+                    glitchFactor: 0,
+                });
 
                 GAME.Txt.text({
-                    ctx: ctx,
-                    x: 64,
-                    y: 64,
-                    text: "WASD OR ARROWS\nTO MOVE",
-                    hspacing: 3, vspacing: 1, halign: 'top', valign: 'left',
-                    scale: 2, snap: 1, render: 1,
-                    glitchChance: .1, glitchFactor: 3
+                    ctx: g.ctxui,
+                    x: 10,
+                    y: 10,
+                    text: "WASD OR ARROWS TO MOVE",
+                    hspacing: 2, vspacing: 1, halign: 'top', valign: 'left',
+                    scale: 1, snap: 1, render: 1,
+                    glitchChance: .4, glitchFactor: .5
                 });
 
                 GAME.ALL.forEach(function(element, index, array){
-                    element.render(ctx);
+                    element.render(g.ctxfg);
                 });
 
 
@@ -158,9 +199,9 @@
         },
 
         gameover: {
-            render: function(){
+            render: function(ctx){
 
-                ctx.clearRect(0,0,512,512);
+                ctx.clearRect(0,0, GAME.const.GAMEWIDTH, GAME.const.GAMEHEIGHT);
 
                 GAME.Txt.text({
                     ctx: ctx,

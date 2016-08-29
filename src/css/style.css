@@ -1,9 +1,27 @@
 body {
   background: black;
 }
+#gamecontainer {
+margin: 0 auto;
+}
+
 #game {
-  margin: 0 auto 0;
-  display: block;
+  float: left;
+  margin-right: 20px;
+  width: 600px;
+  border: 1px solid #555;
+
+}
+
+
+#debugcontainer {
+  float: left;
+  width: 220px;
   border: 3px solid #555;
   border-radius: 3px;
+}
+
+canvas {
+  border: 1px solid #555;
+  margin: 10px;
 }

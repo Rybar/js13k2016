@@ -34,6 +34,7 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js': 
 					[
+						'src/js/stats.js',
 						'src/js/assets.js',
 						'src/js/camera.js',
 						'src/js/rectangle.js',
@@ -44,6 +45,9 @@ module.exports = function(grunt) {
 						'src/js/text.js',
 						'src/js/util.js',
 						'src/js/statemachine.js',
+						'src/js/states/states.js',
+						'src/js/Player.js',
+						'src/js/Enemy.js',
 						'src/js/main.js'
 					]
 				},
@@ -66,6 +70,7 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js':
 						[
+							'src/js/stats.js',
 							'src/js/assets.js',
 							'src/js/camera.js',
 							'src/js/rectangle.js',
@@ -76,6 +81,9 @@ module.exports = function(grunt) {
 							'src/js/text.js',
 							'src/js/util.js',
 							'src/js/statemachine.js',
+							'src/js/states/states.js',
+							'src/js/Player.js',
+							'src/js/Enemy.js',
 							'src/js/main.js'
 						]
 				},

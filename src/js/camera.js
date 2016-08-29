@@ -33,10 +33,10 @@
         this.followed = null;
 
         // rectangle that represents the viewport
-        this.viewportRect = new G.Rectangle(this.xView, this.yView, this.wView, this.hView);
+        this.viewportRect = new g.Rectangle(this.xView, this.yView, this.wView, this.hView);
 
         // rectangle that represents the world's boundary (room's boundary)
-        this.worldRect = new G.Rectangle(0, 0, worldWidth, worldHeight);
+        this.worldRect = new g.Rectangle(0, 0, worldWidth, worldHeight);
     }
 
     // gameObject needs to have "x" and "y" properties (as world(or room) position)

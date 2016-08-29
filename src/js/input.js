@@ -20,6 +20,7 @@
         x: 88,
         f: 70,
         p: 80,
+        r: 82,
 
         isDown: function (keyCode) {
             return this._pressed[keyCode];
