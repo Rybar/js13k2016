@@ -16,26 +16,46 @@ var GAME = {
 
         SCALE: 3,
 
-        GRID: 20,
-        WIDTH: 30,
-        HEIGHT: 30,
+        GRID: 10,
+        WIDTH: 20,
+        HEIGHT: 20,
 
-        P_SPEED: .5,
+        P_SPEED: 1,
+        P_JUMP: 0.5
 
 
     },
 
     events: {
-        P_BUMP: 0,
+        P_BUMP: 0
+    },
 
+    map: {
+        data: [],
 
+        //body: new GAME.Entity(),
 
+        render: function(ctx) {
+            var g = GAME;
+            var data = g.Assets.map;
+            for(var y = 0; y < data.length; y++){
+                for(var x = 0; x < data[y].length; x++){
+                    ctx.fillStyle = "#999";
+                    if(data[y][x]){
+                       ctx.fillRect( x * g.const.GRID, y * g.const.GRID, g.const.GRID, g.const.GRID );
+                    }
+
+                }
+            }
+        }
     },
 
     init: function () {
 
 
         var g = GAME;
+
+
         //canvas layers--------------------------
         canvas = document.querySelector('#game'); //final output canvas, user-facing
         ctx = canvas.getContext('2d');
@@ -47,24 +67,28 @@ var GAME = {
         g.bg.height = 200;
         g.ctxbg = g.bg.getContext('2d');
         g.ctxbg.imageSmoothingEnabled = false;
+        g.ctxbg.mozImageSmoothingEnabled = false;
 
         g.fg = document.createElement('canvas'); //most moving parts here, game foreground
         g.fg.width = 200;
         g.fg.height = 200;
         g.ctxfg = g.fg.getContext('2d');
         g.ctxfg.imageSmoothingEnabled = false;
+        g.ctxfg.mozImageSmoothingEnabled = false;
 
         g.ui = document.createElement('canvas'); //ui elements
         g.ui.width = 200;
         g.ui.height = 200;
         g.ctxui = g.ui.getContext('2d');
         g.ctxui.imageSmoothingEnabled = false;
+        g.ctxui.mozImageSmoothingEnabled = false;
 
         g.comp = document.createElement('canvas'); //our composite canvas before scaling
         g.comp.width = 200;
         g.comp.height = 200;
         g.ctxcomp = g.comp.getContext('2d');
         g.ctxcomp.imageSmoothingEnabled = false;
+        g.ctxcomp.mozImageSmoothingEnabled = false;
 
         //temp append to figure out render
         var debug = document.getElementById('debug')
@@ -156,6 +180,8 @@ var GAME = {
     loop: function () {
         stats.begin();
 
+        //onsole.log('loop running');
+
         var g = GAME;
         g.now = g.timestamp();
 
@@ -170,17 +196,19 @@ var GAME = {
         g.states[g.fsm.current].render(g.ctxfg);
         g.last = g.now;
 
-
+        //----temp map render
         g.ctxcomp.drawImage(g.bg, 0,0); //composite our canvas layers together
 
         g.ctxcomp.drawImage(g.fg, 0,0);
-        g.ctxcomp.save();
-        ctx.globalAlpha = 0.9;
-        g.ctxcomp.drawImage(g.fg, 2,2, 198, 198, 0, 0, 202, 202);
-        g.ctxcomp.drawImage(g.fg, 4,4, 196, 196, 0, 0, 204, 204);
-        g.ctxcomp.drawImage(g.fg, 6,6, 194, 194, 0, 0, 206, 206);
-        g.ctxcomp.restore();
-        g.ctxcomp.drawImage(g.fg, 8,8, 192, 192, 0, 0, 208, 208);
+
+
+        //g.ctxcomp.save();
+        //ctx.globalAlpha = 0.9;
+        //g.ctxcomp.drawImage(g.fg, 2,2, 198, 198, 0, 0, 202, 202); //fun faux-3d effect, revisit this later
+        //g.ctxcomp.drawImage(g.fg, 4,4, 196, 196, 0, 0, 204, 204);
+        //g.ctxcomp.drawImage(g.fg, 6,6, 194, 194, 0, 0, 206, 206);
+        //g.ctxcomp.restore();
+        //g.ctxcomp.drawImage(g.fg, 8,8, 192, 192, 0, 0, 208, 208);
 
         g.ctxcomp.drawImage(g.ui, 0,0);
 
@@ -206,6 +234,7 @@ var GAME = {
 
 
 };
+
 
 
 

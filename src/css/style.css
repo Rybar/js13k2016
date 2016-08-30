@@ -2,26 +2,26 @@ body {
   background: black;
 }
 #gamecontainer {
-margin: 0 auto;
+  margin: 0 auto;
 }
-
 #game {
   float: left;
   margin-right: 20px;
   width: 600px;
   border: 1px solid #555;
-
 }
-
-
 #debugcontainer {
   float: left;
   width: 220px;
   border: 3px solid #555;
   border-radius: 3px;
 }
-
 canvas {
   border: 1px solid #555;
   margin: 10px;
+  cursor: crosshair;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }

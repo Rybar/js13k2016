@@ -4,7 +4,8 @@
         body = new g.Entity({
             radius: 5,
             type: 'player',
-            collides: true
+            collides: true,
+            gravity: 0.05
         });
         body.setCoords(opt.x,opt.y);
 
@@ -14,6 +15,8 @@
             body: body,
             angle: 0,
             update: function(){
+
+
                 this.angle += .05;
                 console.log(this.body.dx);
                 body.update();
@@ -32,8 +35,8 @@
                     scale: 1,
                     snap: 1,
                     render: 1,
-                    glitchChance: .0,
-                    glitchFactor: 0
+                    glitchChance: Math.abs(this.body.dx * 10),
+                    glitchFactor: 3
                 });
 
             }

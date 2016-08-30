@@ -38,4 +38,11 @@ TODO MVP:
     falling patrolling enemies
     crates
     1 gun type
-    
+
+TODO CODE:
+
+    pubsub event logic
+    map - cratebox level
+    bullets
+    particles
+    crates - weapons

@@ -101,15 +101,14 @@
                         });
                         GAME.ALL.push(GAME.player);
 
-                        var enemies = 50;
+                        var enemies = 4;
                         while(enemies--){
                            GAME.enemy = GAME.Enemy({
                                 x: Math.floor(Math.random() * 200),
                                 y: Math.floor(Math.random() * 200),
-                                radius: (Math.floor(Math.random() * 5)) + 5
+                                radius: Math.abs(Math.floor(Math.random() * 6))
                                  });
                             GAME.ALL.push(GAME.enemy);
-
                         }
 
 
@@ -122,6 +121,7 @@
 
                 g.clear(GAME);
 
+                //background-------------------
                 g.ctxbg.fillStyle = "#333";
                 GAME.Txt.text({
                     ctx: g.ctxbg,
@@ -138,7 +138,7 @@
                     glitchChance: 0,
                     glitchFactor: 0,
                 });
-
+                //UI text-----------------------
                 GAME.Txt.text({
                     ctx: g.ctxui,
                     x: 10,
@@ -152,6 +152,8 @@
                 GAME.ALL.forEach(function(element, index, array){
                     element.render(g.ctxfg);
                 });
+                GAME.map.render(g.ctxfg);
+
 
 
             },
@@ -178,7 +180,7 @@
 
                 if(GAME.Key.isDown(GAME.Key.UP) || GAME.Key.isDown(GAME.Key.w))
                 {
-                    GAME.player.body.dy -= GAME.const.P_SPEED * step;
+                    GAME.player.body.dy = -GAME.const.P_JUMP
                 }
                 else if(GAME.Key.isDown(GAME.Key.DOWN) || GAME.Key.isDown(GAME.Key.s))
                 {

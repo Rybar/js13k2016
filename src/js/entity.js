@@ -63,13 +63,16 @@
     };
 
     g.Entity.prototype.hasCollision = function(cx, cy) {
-        if(e.collides){
+        if(this.collides){
             if( (this.cx<1 && this.xr < .5) || cx >= GAME.const.WIDTH)
                 return true;
             else if(this.cy<1 && this.yr < .5 || cy>=GAME.const.HEIGHT ){
                 return true;
             }
-            else return false; //eventually return map coordinates.
+            else if( (GAME.Assets.map[cy]) == undefined  || GAME.Assets.map[cy][cx] == undefined ) {
+                return true;
+            }
+            else return GAME.Assets.map[cy][cx]; //eventually return map coordinates.
         }
 
     };
@@ -112,14 +115,14 @@
             //X component
             this.xr += this.dx;
             this.dx *= this.frictX;
-            //if( this.hasCollision(this.cx-1, this.cy) && this.xr <= 0.3 ) { // if there's something to the left AND we're near the left edge of the current cell
-            //    this.dx = 0;
-            //    this.xr = 0.3;
-            //}
-            //if( this.hasCollision(this.cx+1, this.cy) && this.xr >= 0.7 ) { // ditto right
-            //    this.dx = 0;
-            //    this.xr = 0.7;
-            //}
+            if( this.hasCollision(this.cx-1, this.cy) && this.xr <= 0.3 ) { // if there's something to the left AND we're near the left edge of the current cell
+                this.dx = 0;
+                this.xr = 0.3;
+            }
+            if( this.hasCollision(this.cx+1, this.cy) && this.xr >= 0.7 ) { // ditto right
+                this.dx = 0;
+                this.xr = 0.7;
+            }
             while(this.xr < 0) { //update the cell and fractional movement
                 this.cx--;
                 this.xr++;
@@ -133,14 +136,15 @@
             this.dy += gravity;
             this.yr += this.dy;
             this.dy *= this.frictY;
-            //if( this.hasCollision(this.cx, this.cy-1) && this.yr <= 0.4 ) { // if there's something above...
-            //    this.dy = 0;
-            //    this.yr = 0.4;
-            //}
-            //if( this.hasCollision(this.cx, this.cy+1) && this.yr >= 0.7 ) { // ditto below
-            //    this.dy = 0;
-            //    this.yr = 0.7;
-            //}
+
+            if( this.hasCollision(this.cx, this.cy-1) && this.yr <= 0.4 ) { // if there's something above...
+                this.dy = 0;
+                this.yr = 0.4;
+            }
+            if( this.hasCollision(this.cx, this.cy+1) && this.yr >= 0.7 ) { // ditto below
+                this.dy = 0;
+                this.yr = 0.7;
+            }
             while(this.yr < 0) { //update the cell and fractional movement up
                 this.cy--;
                 this.yr++;
@@ -163,7 +167,7 @@
                             //if the cells are close enough, then we break out the actual distance check
                             var dist = Math.sqrt( (e.xx-this.xx) * (e.xx-this.xx) + (e.yy-this.yy)*(e.yy-this.yy) );
                             if(dist <= this.radius + e.radius) {
-                                console.log('collision resolution!')
+                                //console.log('collision resolution!')
                                 var ang = Math.atan2(e.yy-this.yy, e.xx-this.xx);
                                 var force = 0.03;
                                 var repelPower = (this.radius + e.radius - dist) / (this.radius + e.radius);

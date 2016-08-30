@@ -5,7 +5,8 @@
         body = new g.Entity({
             radius: opt.radius,
             type: 'enemy',
-            collides: true
+            collides: true,
+            gravity: 0.1
         });
         body.setCoords(opt.x, opt.y);
         return {
@@ -25,13 +26,13 @@
 
                 //ctx.fillStyle = "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00" //random shade of red
                 ctx.fillRect(
-                    this.body.xx-g.enemy.body.radius,
-                    this.body.yy-g.enemy.body.radius,
+                    this.body.xx-this.body.radius,
+                    this.body.yy-this.body.radius,
                     this.body.radius*2,
                     this.body.radius*2);
                 ctx.strokeRect(
-                    this.body.xx-g.enemy.body.radius,
-                    this.body.yy-g.enemy.body.radius,
+                    this.body.xx-this.body.radius,
+                    this.body.yy-this.body.radius,
                     this.body.radius*2,
                     this.body.radius*2);
 
