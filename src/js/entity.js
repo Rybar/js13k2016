@@ -29,9 +29,7 @@
         this.dx = 0;
         this.dy = 0;
 
-        this.ddx = 0; //difference between last frame and this frame
-        this.ddy = 0;
-
+        this.collided = false;
         this.ox = 0; //previous frame x
         this.oy = 0; //previous frame y -
 
@@ -42,6 +40,7 @@
         this.frictY = opt.frictY || 0.94;
         this.dead = false;
         this.collides = opt.collides || 0;
+        this.mapcollide = opt.mapcollide || 0;
 
         this.id = Math.random();
 
@@ -63,16 +62,16 @@
     };
 
     g.Entity.prototype.hasCollision = function(cx, cy) {
-        if(this.collides){
-            if( (this.cx<1 && this.xr < .5) || cx >= GAME.const.WIDTH)
-                return true;
-            else if(this.cy<1 && this.yr < .5 || cy>=GAME.const.HEIGHT ){
-                return true;
+        if(this.mapcollide){
+            //if( (this.cx<1 && this.xr < .5) || cx >= GAME.const.WIDTH)
+            //    return true;
+            //else if(this.cy<1 && this.yr < .5 || cy>=GAME.const.HEIGHT ){
+            //    return true;
+            //}
+            if( (GAME.Assets.map[cy]) == undefined  || GAME.Assets.map[cy][cx] == undefined ) {
+                return false;
             }
-            else if( (GAME.Assets.map[cy]) == undefined  || GAME.Assets.map[cy][cx] == undefined ) {
-                return true;
-            }
-            else return GAME.Assets.map[cy][cx]; //eventually return map coordinates.
+            else return GAME.Assets.map[cy][cx] || false; //eventually return map coordinates.
         }
 
     };
@@ -168,6 +167,7 @@
                             var dist = Math.sqrt( (e.xx-this.xx) * (e.xx-this.xx) + (e.yy-this.yy)*(e.yy-this.yy) );
                             if(dist <= this.radius + e.radius) {
                                 //console.log('collision resolution!')
+                                this.collided = true;
                                 var ang = Math.atan2(e.yy-this.yy, e.xx-this.xx);
                                 var force = 0.03;
                                 var repelPower = (this.radius + e.radius - dist) / (this.radius + e.radius);

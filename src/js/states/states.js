@@ -101,12 +101,12 @@
                         });
                         GAME.ALL.push(GAME.player);
 
-                        var enemies = 4;
+                        var enemies = 10;
                         while(enemies--){
                            GAME.enemy = GAME.Enemy({
                                 x: Math.floor(Math.random() * 200),
                                 y: Math.floor(Math.random() * 200),
-                                radius: Math.abs(Math.floor(Math.random() * 6))
+                                radius: Math.abs(Math.floor(Math.random() * 2) + 4)
                                  });
                             GAME.ALL.push(GAME.enemy);
                         }
@@ -122,7 +122,7 @@
                 g.clear(GAME);
 
                 //background-------------------
-                g.ctxbg.fillStyle = "#333";
+                g.ctxbg.fillStyle = "#223";
                 GAME.Txt.text({
                     ctx: g.ctxbg,
                     x: 0,
@@ -135,8 +135,8 @@
                     scale: 10,
                     snap: 1,
                     render: 1,
-                    glitchChance: 0,
-                    glitchFactor: 0,
+                    glitchChance: 0.05 + g.const.GLITCH,
+                    glitchFactor: .05 + g.const.GLITCHFACTOR,
                 });
                 //UI text-----------------------
                 GAME.Txt.text({
@@ -166,33 +166,23 @@
                 if(GAME.Key.isDown(GAME.Key.r)) {
                     if(GAME.fsm.current)GAME.fsm.reset();
                 }
-                //player movement
-                if(GAME.Key.isDown(GAME.Key.LEFT) || GAME.Key.isDown(GAME.Key.a))
-                {
-                    //console.log(GAME.player.body.dx, + " " + GAME.player.body.cx + " " + GAME.player.body.xx);
-                    GAME.player.body.dx -= GAME.const.P_SPEED * step;
-                }
-                else if(GAME.Key.isDown(GAME.Key.RIGHT) || GAME.Key.isDown(GAME.Key.d))
-                {
-                    //console.log(GAME.player.body.dx, + " " + GAME.player.body.cx + " " + GAME.player.body.xx);
-                    GAME.player.body.dx += GAME.const.P_SPEED * step;
-                }
 
-                if(GAME.Key.isDown(GAME.Key.UP) || GAME.Key.isDown(GAME.Key.w))
-                {
-                    GAME.player.body.dy = -GAME.const.P_JUMP
-                }
-                else if(GAME.Key.isDown(GAME.Key.DOWN) || GAME.Key.isDown(GAME.Key.s))
-                {
-                    GAME.player.body.dy += GAME.const.P_SPEED * step;
-                }
-                //console.log('update step');
+
+               if(GAME.Key.isDown(GAME.Key.f))
+               {
+                   GAME.const.GLITCH += .01;
+               }
+                if(GAME.Key.isDown(GAME.Key.p))
+               {
+                   GAME.const.GLITCHFACTOR += .01;
+               }
 
 
                 //physics update
 
                 GAME.ALL.forEach(function(element, index, array){
-                    element.body.update();
+                    element.update(step);
+                    element.body.update(step);
                 });
 
 

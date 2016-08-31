@@ -21,8 +21,13 @@ var GAME = {
         HEIGHT: 20,
 
         P_SPEED: 1,
-        P_JUMP: 0.5
+        P_JUMP: 0.5,
 
+        E_SPEED:.2,
+        E_JUMP: .25,
+
+        GLITCH: 0,
+        GLITCHFACTOR: 0
 
     },
 
@@ -40,9 +45,24 @@ var GAME = {
             var data = g.Assets.map;
             for(var y = 0; y < data.length; y++){
                 for(var x = 0; x < data[y].length; x++){
-                    ctx.fillStyle = "#999";
+                    ctx.fillStyle = "#779";
                     if(data[y][x]){
-                       ctx.fillRect( x * g.const.GRID, y * g.const.GRID, g.const.GRID, g.const.GRID );
+                       //ctx.fillRect( x * g.const.GRID, y * g.const.GRID, g.const.GRID, g.const.GRID );
+                        GAME.Txt.text({
+                            ctx: ctx,
+                            x: x * g.const.GRID,
+                            y: y * g.const.GRID,
+                            text: "ox\nxo",
+                            hspacing: 0,
+                            vspacing: 0,
+                            halign: 'top',
+                            valign: 'left',
+                            scale: 1,
+                            snap: 1,
+                            render: 1,
+                            glitchChance: g.const.GLITCH,
+                            glitchFactor: g.const.GLITCHFACTOR
+                        });
                     }
 
                 }
@@ -187,12 +207,12 @@ var GAME = {
 
         g.dt = g.dt + Math.min(1, (g.now - g.last) / 1000);
         //console.log(g.dt + ' '+ g.step);
-        while (g.dt > g.step) {
 
+        while (g.dt > g.step) {
             g.dt = g.dt - g.step;
             g.states[g.fsm.current].update(g.step);
-
         }
+
         g.states[g.fsm.current].render(g.ctxfg);
         g.last = g.now;
 
@@ -217,7 +237,6 @@ var GAME = {
             g.comp, 0, 0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT, //source
             0, 0, g.const.GAMEWIDTH * g.const.SCALE, g.const.GAMEHEIGHT * g.const.SCALE //destination, scaled 3x
         );
-
 
         stats.end();
 
