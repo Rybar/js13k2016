@@ -8,6 +8,7 @@
 
             onenter: function() {
                 if(!GAME.sounds)GAME.initAudio(); //off for now, placeholder song works
+                else g.audioCtx = {};
             },
 
             render: function(){
@@ -18,7 +19,8 @@
                     'RENDERING SOUNDS...',
                     'CONFIGURATING PIXELS....',
                     'RETICULATING SPLINES...',
-                    'MESSAGE 4',
+                    'MESSAGE 42',
+                    'PREPARING ENEMIES...',
                     'ALMOST THERE...',
                     'READY. PRESS A TO CONTINUE'];
 
@@ -57,7 +59,13 @@
         menu: {
 
             onenter: function(event, from, to){
-                if(event == 'ready') g.song1.start();
+                if(event == 'ready'){
+                    g.titlesong=g.playSound(g.sounds.titlesong, true);
+                }
+            },
+
+            onexit: function(event, from, to){
+              if(event == 'play') g.titlesong.sound.stop();
             },
 
             render: function(){
@@ -122,12 +130,17 @@
                                 radius: Math.abs(Math.floor(Math.random() * 2) + 4)
                                  });
                             GAME.ALL.push(GAME.enemy);
+
                         }
 
-
+                        GAME.song=GAME.playSound(GAME.sounds.song, true)
                         break;
                 }
 
+            },
+
+            onexit: function(event, from, to){
+              GAME.titlesong.sound.stop();
             },
 
             render: function(){

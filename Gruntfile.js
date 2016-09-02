@@ -45,11 +45,11 @@ module.exports = function(grunt) {
 						'src/js/Enemy.js',
 
 						'src/js/input.js',
-						'src/js/camera.js',
-						'src/js/rectangle.js',
+						//'src/js/camera.js',
+						//'src/js/rectangle.js',
 
 
-						'src/js/pubsub.js',
+						//'src/js/pubsub.js',
 						'src/js/assets.js',
 						'src/js/text.js',
 						'src/js/entity.js',
@@ -88,11 +88,11 @@ module.exports = function(grunt) {
 							'src/js/Enemy.js',
 
 							'src/js/input.js',
-							'src/js/camera.js',
-							'src/js/rectangle.js',
+							//'src/js/camera.js',
+							//'src/js/rectangle.js',
 
 
-							'src/js/pubsub.js',
+							//'src/js/pubsub.js',
 							'src/js/assets.js',
 							'src/js/text.js',
 							'src/js/entity.js',

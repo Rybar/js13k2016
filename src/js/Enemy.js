@@ -7,13 +7,16 @@
             type: 'enemy',
             collides: false,
             mapcollide: true,
-            gravity: 0.06
+            gravity: 0.06,
+            fillStyle: "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
+
         });
         body.setCoords(opt.x, opt.y);
         return {
             color: '#f00',
             body: body,
             movingLeft: true,
+            antennae: Math.random() > 0.5,
 
             update: function(step){
 
@@ -49,12 +52,12 @@
                 ctx.save();
                 ctx.translate(0.5, 0.5);
 
-                //ctx.fillStyle = "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00" //random shade of red
+                ctx.fillStyle = opt.fillStyle;
                 ctx.fillRect(
-                    this.body.xx-this.body.radius +1,
-                    this.body.yy-this.body.radius +1,
-                    (this.body.radius*2)-1,
-                    (this.body.radius*2)-3);
+                    this.body.xx-this.body.radius,
+                    this.body.yy-this.body.radius,
+                    (this.body.radius*2),
+                    (this.body.radius*2));
                 ctx.strokeRect(
                     this.body.xx-this.body.radius,
                     this.body.yy-this.body.radius,
@@ -65,13 +68,27 @@
 
                 ctx.fillStyle = "#FFF";  //eyes
                 ctx.fillRect(
-                    this.body.xx-2,
-                    this.body.yy-4,
+                    this.body.xx-3,
+                    this.body.yy-2,
                     1, 1);
                 ctx.fillRect(
                     this.body.xx+3,
-                    this.body.yy-4,
+                    this.body.yy-2,
                     1, 1);
+                ctx.fillStyle = "#FF0"
+                if(this.antennae) {
+                    ctx.fillRect(
+                        this.body.xx - 3,
+                        this.body.yy - 9,
+                        1,
+                        5);
+                    ctx.fillRect(
+                        this.body.xx + 3,
+                        this.body.yy - 9,
+                        1,
+                        5);
+                }
+
 
             }
 

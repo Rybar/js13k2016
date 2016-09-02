@@ -146,8 +146,14 @@ var GAME = {
                 onentermenu: function (event, from, to) {
                     GAME.states.menu.onenter(event, from, to)
                 },
+                onleavemenu: function (event, from, to) {
+                    GAME.states.menu.onexit(event, from, to)
+                },
                 onentergame: function (event, from, to) {
                     GAME.states.game.onenter(event, from, to)
+                },
+                onleavegame: function (event, from, to) {
+                    GAME.states.game.onexit(event, from, to)
                 }
             }
         }),
@@ -177,45 +183,61 @@ var GAME = {
         var g = GAME;
         g.sounds = {};
         g.sounds.loaded = 0;
-        g.sounds.total = 6;
+        g.sounds.total = 7;
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         g.audioCtx = new AudioContext;
 
-        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound1);
+        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.jump);
         g.soundGen.createAudioBuffer(147+24, function(buffer) {
             g.sounds.loaded++;
-            g.sounds.es1 = buffer;
+            g.sounds.jump = buffer;
         });
         g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound2);
         g.soundGen.createAudioBuffer(147+24, function(buffer) {
             g.sounds.loaded++;
-            g.sounds.es1 = buffer;
+            g.sounds.es2 = buffer;
         });
         g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound3);
         g.soundGen.createAudioBuffer(147+24, function(buffer) {
             g.sounds.loaded++;
-            g.sounds.es1 = buffer;
+            g.sounds.es3 = buffer;
         });
         g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound4);
         g.soundGen.createAudioBuffer(147+24, function(buffer) {
             g.sounds.loaded++;
-            g.sounds.es1 = buffer;
+            g.sounds.es4 = buffer;
         });
         g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound5);
         g.soundGen.createAudioBuffer(147+24, function(buffer) {
             g.sounds.loaded++;
-            g.sounds.es1 = buffer;
+            g.sounds.es5 = buffer;
         });
-        console.log('rendering music');
-        g.song = new g.sonantx.MusicGenerator(g.Assets.song);
-        g.song.createAudioBuffer(function (buffer) {
-            g.song1 = g.audioCtx.createBufferSource();
-            g.song1.buffer = buffer;
-            g.song1.connect(g.audioCtx.destination);
+        //console.log('rendering music');
+        g.soundGen = new g.sonantx.MusicGenerator(g.Assets.song);
+        g.soundGen.createAudioBuffer(function (buffer) {
+            g.sounds.song = buffer;
             g.sounds.loaded++;
-            //g.song1.start();
         });
 
+        g.soundGen = new g.sonantx.MusicGenerator(g.Assets.titlesong);
+        g.soundGen.createAudioBuffer(function (buffer) {
+            g.sounds.titlesong = buffer;
+            g.sounds.loaded++;
+        });
+
+    },
+
+    playSound: function(buffer, loop) {
+        var g = GAME;
+        var source = g.audioCtx.createBufferSource();
+        var gainNode = g.audioCtx.createGain();
+        source.buffer = buffer;
+        source.connect(gainNode);
+        gainNode.connect(g.audioCtx.destination);
+        source.loop = loop;
+        gainNode.gain.value = 1;
+        source.start();
+        return {volume: gainNode, sound: source};
     },
 
     loop: function () {

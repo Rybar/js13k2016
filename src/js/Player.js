@@ -31,12 +31,14 @@
 
                 if(GAME.Key.isDown(GAME.Key.UP) || GAME.Key.isDown(GAME.Key.w))
                 {
-                    GAME.player.body.dy = -GAME.const.P_JUMP
+                    GAME.player.body.dy = -GAME.const.P_JUMP;
+                    GAME.playSound(g.sounds.jump);
                 }
                 else if(GAME.Key.isDown(GAME.Key.DOWN) || GAME.Key.isDown(GAME.Key.s))
                 {
                     GAME.player.body.dy += GAME.const.P_SPEED * step;
                 }
+
                 //console.log('update step');
             },
             render: function(ctx){
