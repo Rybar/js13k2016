@@ -1,3 +1,6 @@
+//todo: finish no-namespace refactor
+//todo: add 'first' and 'last' to gruntfile
+
 #js13k 2016
 
 Super Glitch Box

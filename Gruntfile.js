@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
 			scripts: {
 				files: ['src/js/**/*.js'],
-				tasks: ['uglify:development'],
+				tasks: ['concat:dist', 'uglify:development'],
 			},
 			css: {
 				files: 'src/css/**/*.less',
@@ -26,6 +26,27 @@ module.exports = function(grunt) {
 			}
 		},
 
+		concat : {
+			dist : {
+				src  : [
+					'src/js/first.js',
+
+					'src/js/main.js',
+					'src/js/statemachine.js',
+					'src/js/states/states.js',
+					'src/js/Player.js',
+					'src/js/Enemy.js',
+					'src/js/input.js',
+					'src/js/assets.js',
+					'src/js/text.js',
+					'src/js/entity.js',
+					'src/js/sonantx.js',
+					'src/js/last.js'
+				],
+				dest : 'src/js/concat.js'
+			}
+		},
+
 		uglify: {
 			development: {
 				options: {
@@ -34,28 +55,7 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js': 
 					[
-
-						//'src/js/stats.js',
-						'src/js/statemachine.js',
-						'src/js/main.js',
-
-
-						'src/js/states/states.js',
-						'src/js/Player.js',
-						'src/js/Enemy.js',
-
-						'src/js/input.js',
-						//'src/js/camera.js',
-						//'src/js/rectangle.js',
-
-
-						//'src/js/pubsub.js',
-						'src/js/assets.js',
-						'src/js/text.js',
-						'src/js/entity.js',
-						'src/js/sonantx.js',
-						'src/js/last.js',
-
+						'src/js/concat.js'
 					]
 				},
 			},
@@ -77,27 +77,7 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js':
 						[
-
-							//'src/js/stats.js',
-							'src/js/statemachine.js',
-							'src/js/main.js',
-
-
-							'src/js/states/states.js',
-							'src/js/Player.js',
-							'src/js/Enemy.js',
-
-							'src/js/input.js',
-							//'src/js/camera.js',
-							//'src/js/rectangle.js',
-
-
-							//'src/js/pubsub.js',
-							'src/js/assets.js',
-							'src/js/text.js',
-							'src/js/entity.js',
-							'src/js/sonantx.js',
-							'src/js/last.js',
+							'src/js/concat.js'
 						]
 				},
 			}
@@ -158,6 +138,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-htmlmin');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-express');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-parallel');
 
 	var fs = require('fs');
 	grunt.registerTask('sizecheck', function() {
@@ -173,7 +155,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('default', ['watch']);
-	grunt.registerTask('build', ['uglify:development', 'less:development', 'htmlmin:development']);
-	grunt.registerTask('build-compress', ['uglify:compressed', 'less:compressed', 'htmlmin:compressed', 'compress:main', 'sizecheck']);
-	grunt.registerTask('server', ['express','watch']);
+	grunt.registerTask('build', ['concat:dist', 'uglify:development', 'less:development', 'htmlmin:development']);
+	grunt.registerTask('build-compress', ['concat:dist','uglify:compressed', 'less:compressed', 'htmlmin:compressed', 'compress:main', 'sizecheck']);
+	grunt.registerTask('server', ['concat:dist','express','watch']);
 };

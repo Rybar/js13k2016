@@ -1,8 +1,4 @@
-/*global GAME*/
-
-(function(g) {
-
-    g.Key = {
+    Key = {
 
         _pressed: {},
         _released: {},
@@ -44,7 +40,3 @@
             this._released = {};
         }
     };
-
-    return g;
-
-}(GAME));

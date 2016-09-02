@@ -1,7 +1,4 @@
 //Camera
-(function(g){
-
-
 
     // possibles axis to move the camera
     var AXIS = {
@@ -90,10 +87,3 @@
         }
 
     };
-
-    // add "class" Camera to our Game object
-    g.Camera = Camera;
-
-    return g;
-
-})(GAME);

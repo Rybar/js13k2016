@@ -1,9 +1,10 @@
-/*global GAME */
+/*global
+* Const*/
 
-(function(g) {
 
 
-    g.Entity = function(opt){
+
+    Entity = function(opt){
         var that = this;
 
 
@@ -48,42 +49,42 @@
     };
 
 
-    g.Entity.prototype.die = function() {
+    Entity.prototype.die = function() {
         var that = this;
 
         that.dead = true;
-        GAME.ALL.splice(GAME.ALL.indexOf(that), 1);
+        ALL.splice(ALL.indexOf(that), 1);
     }
 
-    g.Entity.prototype.setCoords = function(x,y) {
+    Entity.prototype.setCoords = function(x,y) {
         var that = this;
 
         that.xx = x;
         that.yy = y;
-        that.cx = Math.floor(that.xx/GAME.const.GRID);
-        that.cy = Math.floor(that.yy/GAME.const.GRID);
-        that.xr = (that.xx - that.cx*GAME.const.GRID) / GAME.const.GRID;
-        that.yr = (that.yy - that.cy*GAME.const.GRID) / GAME.const.GRID;
+        that.cx = Math.floor(that.xx/Const.GRID);
+        that.cy = Math.floor(that.yy/Const.GRID);
+        that.xr = (that.xx - that.cx*Const.GRID) / Const.GRID;
+        that.yr = (that.yy - that.cy*Const.GRID) / Const.GRID;
     };
 
-    g.Entity.prototype.hasCollision = function(cx, cy) {
+    Entity.prototype.hasCollision = function(cx, cy) {
         var that = this;
 
         if(that.mapcollide){
-            //if( (that.cx<1 && that.xr < .5) || cx >= GAME.const.WIDTH)
+            //if( (that.cx<1 && that.xr < .5) || cx >= Const.WIDTH)
             //    return true;
-            //else if(that.cy<1 && that.yr < .5 || cy>=GAME.const.HEIGHT ){
+            //else if(that.cy<1 && that.yr < .5 || cy>=Const.HEIGHT ){
             //    return true;
             //}
-            if( (GAME.Assets.map[cy]) == undefined  || GAME.Assets.map[cy][cx] == undefined ) {
+            if( (Assets.map[cy]) == undefined  || Assets.map[cy][cx] == undefined ) {
                 return false;
             }
-            else return GAME.Assets.map[cy][cx] || false; //eventually return map coordinates.
+            else return Assets.map[cy][cx] || false; //eventually return map coordinates.
         }
 
     };
 
-    g.Entity.prototype.overlaps = function(e) { //e is another g.Entity
+    Entity.prototype.overlaps = function(e) { //e is another Entity
         var that = this;
 
         var maxDist = that.radius + e.radius;
@@ -94,30 +95,30 @@
             return false;
     };
 
-    g.Entity.prototype.onGround = function() {
+    Entity.prototype.onGround = function() {
         var that = this;
 
         return that.hasCollision(that.cx, that.cy+1) && that.yr>=0.5;
     };
 
-    g.Entity.prototype.onCeiling = function() {
+    Entity.prototype.onCeiling = function() {
         var that = this;
 
         return that.hasCollision(that.cx, that.cy-1) && that.yr<=0.5;
     };
 
-    g.Entity.prototype.onWallLeft = function() {
+    Entity.prototype.onWallLeft = function() {
         var that = this;
 
         return that.hasCollision(that.cx-1, that.cy) && that.xr<=0.5;
     }
-    g.Entity.prototype.onWallRight = function() {
+    Entity.prototype.onWallRight = function() {
         var that = this;
 
         return that.hasCollision(that.cx+1, that.cy) && that.xr>=0.5;
     }
 
-    g.Entity.prototype.update = function() {
+    Entity.prototype.update = function() {
         var that = this;
 
 
@@ -174,9 +175,9 @@
 
             //object collision handling--------------------
 
-            for(var i = 0; i < GAME.ALL.length; i++) {
+            for(var i = 0; i < ALL.length; i++) {
                 //console.log('in collision check loop');
-                var e = GAME.ALL[i].body;
+                var e = ALL[i].body;
                 if(e.dead == false){
                     if(e.collides){
                         //broad phase collision detection
@@ -206,20 +207,15 @@
 
             //update actual pixel coordinates:
 
-            that.xx = Math.floor((that.cx + that.xr)*GAME.const.GRID);
-            that.yy = Math.floor((that.cy + that.yr)*GAME.const.GRID);
-            that.ddx = (that.cx + that.xr)*GAME.const.GRID - that.ox;
-            that.ddy = (that.cy + that.yr)*GAME.const.GRID - that.oy;
-            that.ox = (that.cx + that.xr)*GAME.const.GRID;
-            that.oy = (that.cy + that.yr)*GAME.const.GRID;
+            that.xx = Math.floor((that.cx + that.xr)*Const.GRID);
+            that.yy = Math.floor((that.cy + that.yr)*Const.GRID);
+            that.ddx = (that.cx + that.xr)* Const.GRID - that.ox;
+            that.ddy = (that.cy + that.yr)* Const.GRID - that.oy;
+            that.ox = (that.cx + that.xr)* Const.GRID;
+            that.oy = (that.cy + that.yr)* Const.GRID;
 
 
         }
 
 
     };
-
-    return g
-
-
-}(GAME));

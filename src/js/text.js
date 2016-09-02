@@ -1,9 +1,7 @@
 /*global GAME*/
 //todo: factor in global glitch variables
 //todo: modify glitch render to glitch both directions on both axes
-(function(g) {
-
-	g.Txt = {
+	Txt = {
 		textLine: function (opt) {
 			if (!opt.glitchFactor) opt.glitchFactor = 0;
 			if (!opt.glitchChance) opt.glitchChance = 0;
@@ -11,7 +9,7 @@
 			var textLength = opt.text.length,
 				size = 5;
 			for (var i = 0; i < textLength; i++) {
-				var letter = GAME.Assets.letters[( opt.text.charAt(i) )] || GAME.Assets.letters['unknown'];
+				var letter = Assets.letters[( opt.text.charAt(i) )] || Assets.letters['unknown'];
 				for (var y = 0; y < size; y++) {
 					//var g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
 					for (var x = 0; x < size; x++) {
@@ -111,6 +109,3 @@
 			}
 		}
 	};
-	return g;
-
-}(GAME));

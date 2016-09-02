@@ -1,7 +1,5 @@
-(function(g){
-    g.Player =  function(opt) {
-        var g = GAME;
-        body = new g.Entity({
+Player =  function(opt) {
+        body = new Entity({
             radius: 10,
             type: 'player',
             collides: true,
@@ -18,32 +16,32 @@
             update: function(step){
 
                 //player movement
-                if(GAME.Key.isDown(GAME.Key.LEFT) || GAME.Key.isDown(GAME.Key.a))
+                if(Key.isDown(Key.LEFT) || Key.isDown(Key.a))
                 {
-                    //console.log(GAME.player.body.dx, + " " + GAME.player.body.cx + " " + GAME.player.body.xx);
-                    GAME.player.body.dx -= GAME.const.P_SPEED * step;
+                    //console.log(player.body.dx, + " " + player.body.cx + " " + player.body.xx);
+                    player.body.dx -= Const.P_SPEED * step;
                 }
-                else if(GAME.Key.isDown(GAME.Key.RIGHT) || GAME.Key.isDown(GAME.Key.d))
+                else if(Key.isDown(Key.RIGHT) || Key.isDown(Key.d))
                 {
-                    //console.log(GAME.player.body.dx, + " " + GAME.player.body.cx + " " + GAME.player.body.xx);
-                    GAME.player.body.dx += GAME.const.P_SPEED * step;
+                    //console.log(player.body.dx, + " " + player.body.cx + " " + player.body.xx);
+                    player.body.dx += Const.P_SPEED * step;
                 }
 
-                if(GAME.Key.isDown(GAME.Key.UP) || GAME.Key.isDown(GAME.Key.w))
+                if(Key.isDown(Key.UP) || Key.isDown(Key.w))
                 {
-                    GAME.player.body.dy = -GAME.const.P_JUMP;
-                    GAME.playSound(g.sounds.jump);
+                    player.body.dy = -Const.P_JUMP;
+                    playSound(sounds.jump);
                 }
-                else if(GAME.Key.isDown(GAME.Key.DOWN) || GAME.Key.isDown(GAME.Key.s))
+                else if(Key.isDown(Key.DOWN) || Key.isDown(Key.s))
                 {
-                    GAME.player.body.dy += GAME.const.P_SPEED * step;
+                    player.body.dy += Const.P_SPEED * step;
                 }
 
                 //console.log('update step');
             },
             render: function(ctx){
                 ctx.fillStyle = "#0f0"
-                GAME.Txt.text({
+                Txt.text({
                     ctx: ctx,
                     x: this.body.xx-this.body.radius,
                     y: this.body.yy-this.body.radius,
@@ -62,5 +60,3 @@
             }
         };
     }
-
-}(GAME));

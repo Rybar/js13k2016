@@ -1,8 +1,7 @@
-(function(g){
 
-    g.Enemy = function(opt) {
-        var g = GAME;
-        body = new g.Entity({
+    Enemy = function(opt) {
+
+        body = new Entity({
             radius: opt.radius,
             type: 'enemy',
             collides: false,
@@ -22,9 +21,9 @@
 
                 //patrol logic ----------------
                 if(this.movingLeft){
-                    this.body.dx -= g.const.E_SPEED * step;
+                    this.body.dx -= Const.E_SPEED * step;
                 }
-                else this.body.dx += g.const.E_SPEED * step;
+                else this.body.dx += Const.E_SPEED * step;
 
                 if(this.body.onWallLeft()){
                     this.movingLeft = false;
@@ -38,7 +37,7 @@
                 }
 
                 //world wrap + anger stuff? crate-box style
-                if(this.body.yy > g.const.GAMEHEIGHT){
+                if(this.body.yy > Const.GAMEHEIGHT){
                     this.body.setCoords(100, -5);
                 }
 
@@ -94,5 +93,4 @@
 
         };
 
-    }
-}(GAME));
+    };

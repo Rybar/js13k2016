@@ -1,21 +1,19 @@
 //todo: split out into separate modules
-//title screen and
-(function(g){
-
-    g.states =  {
+/*global that*/
+    states =  {
 
         boot: {
 
             onenter: function() {
-                if(!GAME.sounds)GAME.initAudio(); //off for now, placeholder song works
-                else g.audioCtx = {};
+                if(!sounds.jump)initAudio(); //off for now, placeholder song works
+                else that.audioCtx = {};
             },
 
             render: function(){
 
-                g.clear(GAME);
-                g.ALL = [];
-                g.loadmsg = ['INITIALIZING',
+                clear(GAME);
+                ALL = [];
+                var loadmsg = ['INITIALIZING',
                     'RENDERING SOUNDS...',
                     'CONFIGURATING PIXELS....',
                     'RETICULATING SPLINES...',
@@ -24,13 +22,13 @@
                     'ALMOST THERE...',
                     'READY. PRESS A TO CONTINUE'];
 
-                ctx.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
-                g.ctxui.fillStyle = "#0f0";
-                GAME.Txt.text({
-                    ctx: g.ctxui,
+                ctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+                ctxui.fillStyle = "#0f0";
+                Txt.text({
+                    ctx: ctxui,
                     x: 20,
                     y: 20,
-                    text: g.loadmsg[g.sounds.loaded],
+                    text: loadmsg[sounds.loaded],
                     hspacing: 2,
                     vspacing: 1,
                     halign: 'top',
@@ -45,11 +43,11 @@
             },
             update: function(){
 
-                if(GAME.Key.isDown(GAME.Key.r)) {
-                    if(GAME.fsm.current)GAME.fsm.reset();
+                if(Key.isDown(Key.r)) {
+                    if(fsm.current)fsm.reset();
                 }
-                if(GAME.sounds.loaded == GAME.sounds.total && GAME.Key.isDown(GAME.Key.a)) {
-                    if(GAME.fsm.current == 'boot') GAME.fsm.ready();
+                if(sounds.loaded == sounds.total && Key.isDown(Key.a)) {
+                    if(fsm.current == 'boot') fsm.ready();
                 }
 
             }
@@ -60,24 +58,24 @@
 
             onenter: function(event, from, to){
                 if(event == 'ready'){
-                    g.titlesong=g.playSound(g.sounds.titlesong, true);
+                    titlesong=playSound(sounds.titlesong, true);
                 }
             },
 
             onexit: function(event, from, to){
-              if(event == 'play') g.titlesong.sound.stop();
+              if(event == 'play') titlesong.sound.stop();
             },
 
             render: function(){
 
-                g.clear(GAME);
+                clear(GAME);
 
-                g.ctxbg.fillStyle = "#444";
+                ctxbfillStyle = "#444";
 
 
                 ctx.fillStyle = "#fff";
-                GAME.Txt.text({
-                    ctx: g.ctxui,
+                Txt.text({
+                    ctx: ctxui,
                     x: 20,
                     y: 20,
                     text: "GLITCHBOX\nPRESS S TO CONTINUE",
@@ -94,13 +92,13 @@
             },
 
             update: function(){
-                if(GAME.Key.isDown(GAME.Key.r)) {
-                    if(GAME.fsm.current)GAME.fsm.reset();
+                if(Key.isDown(Key.r)) {
+                    if(fsm.current)fsm.reset();
                 }
 
-                if(GAME.Key.isDown(GAME.Key.s)) {
+                if(Key.isDown(Key.s)) {
                     ctx.fillStyle = "#00ff00";
-                    if(GAME.fsm.current == 'menu') GAME.fsm.play();
+                    if(fsm.current == 'menu') fsm.play();
                 }
 
 
@@ -116,41 +114,41 @@
 
                     case 'play':
 
-                        GAME.player = GAME.Player({
+                        player = Player({
                             x: 100,
                             y: 100
                         });
-                        GAME.ALL.push(GAME.player);
+                        ALL.push(player);
 
                         var enemies = 10;
                         while(enemies--){
-                           GAME.enemy = GAME.Enemy({
+                           var enemy = Enemy({
                                 x: Math.floor(Math.random() * 200),
                                 y: Math.floor(Math.random() * 200),
                                 radius: Math.abs(Math.floor(Math.random() * 2) + 4)
                                  });
-                            GAME.ALL.push(GAME.enemy);
+                            ALL.push(enemy);
 
                         }
 
-                        GAME.song=GAME.playSound(GAME.sounds.song, true)
+                        song=playSound(sounds.song, true)
                         break;
                 }
 
             },
 
             onexit: function(event, from, to){
-              GAME.titlesong.sound.stop();
+              titlesong.sound.stop();
             },
 
             render: function(){
 
-                g.clear(GAME);
+                clear(GAME);
 
                 //background-------------------
-                g.ctxbg.fillStyle = "#223";
-                GAME.Txt.text({
-                    ctx: g.ctxbg,
+                ctxbg.fillStyle = "#223";
+                Txt.text({
+                    ctx: ctxbg,
                     x: 0,
                     y: 0,
                     text: "xzxz\nzxzx\nxzxz\nzxzx",
@@ -161,12 +159,12 @@
                     scale: 10,
                     snap: 1,
                     render: 1,
-                    glitchChance: 0.05 + g.const.GLITCH,
-                    glitchFactor: .05 + g.const.GLITCHFACTOR,
+                    glitchChance: 0.05 + Const.GLITCH,
+                    glitchFactor: .05 + Const.GLITCHFACTOR,
                 });
                 //UI text-----------------------
-                GAME.Txt.text({
-                    ctx: g.ctxui,
+                Txt.text({
+                    ctx: ctxui,
                     x: 10,
                     y: 10,
                     text: "WASD OR ARROWS TO MOVE",
@@ -175,10 +173,10 @@
                     glitchChance: .4, glitchFactor: .5
                 });
 
-                GAME.map.render(g.ctxfg);
+                map.render(ctxfg);
 
-                GAME.ALL.forEach(function(element, index, array){
-                    element.render(g.ctxfg);
+                ALL.forEach(function(element, index, array){
+                    element.render(ctxfg);
                 });
 
 
@@ -188,24 +186,24 @@
             update: function(step){
 
                 //reset from any state
-                if(GAME.Key.isDown(GAME.Key.r)) {
-                    if(GAME.fsm.current)GAME.fsm.reset();
+                if(Key.isDown(Key.r)) {
+                    if(fsm.current)fsm.reset();
                 }
 
 
-               if(GAME.Key.isDown(GAME.Key.f))
+               if(Key.isDown(Key.f))
                {
-                   GAME.const.GLITCH += .01;
+                   Const.GLITCH += .01;
                }
-                if(GAME.Key.isDown(GAME.Key.p))
+                if(Key.isDown(Key.p))
                {
-                   GAME.const.GLITCHFACTOR += .01;
+                   Const.GLITCHFACTOR += .01;
                }
 
 
                 //physics update
 
-                GAME.ALL.forEach(function(element, index, array){
+                ALL.forEach(function(element, index, array){
                     element.update(step);
                     element.body.update(step);
                 });
@@ -218,9 +216,9 @@
         gameover: {
             render: function(ctx){
 
-                ctx.clearRect(0,0, GAME.const.GAMEWIDTH, GAME.const.GAMEHEIGHT);
+                ctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
 
-                GAME.Txt.text({
+                Txt.text({
                     ctx: ctx,
                     x: 64,
                     y: 128,
@@ -239,23 +237,19 @@
             },
             update: function(){
 
-                if(GAME.Key.isDown(GAME.Key.r)) {
+                if(Key.isDown(Key.r)) {
 
-                    if(GAME.fsm.current)GAME.fsm.reset();
+                    if(fsm.current)fsm.reset();
 
                 }
-                if(GAME.Key.isDown(GAME.Key.s)){
+                if(Key.isDown(Key.s)){
 
-                    if(GAME.fsm.current == 'gameover')GAME.fsm.play();
+                    if(fsm.current == 'gameover')fsm.play();
 
                 }
 
             }
 
-        },
+        }
 
-    }
-
-    return g;
-
-})(GAME);
+    };

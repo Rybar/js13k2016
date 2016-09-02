@@ -7,10 +7,54 @@
 /*var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom);*/
+var ALL = [],
+    fps = 60,
+    step = 1 / fps,
+    dt = 0,
+    now = timestamp(),
+    last = timestamp(),
+    sounds = {},
+    that = this,
+    fsm = {},
+//console.log(last);
+    loadProgress = 0;
 
-var GAME = {
+//canvas layers--------------------------
+var canvas = document.querySelector('#game'); //final output canvas, user-facing
+var ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+ctx.fillStyle = "#0F0";
 
-    const: {
+var bg = document.createElement('canvas'); //background
+bg.width = 200;
+bg.height = 200;
+var ctxbg = bg.getContext('2d');
+ctxbg.imageSmoothingEnabled = false;
+ctxbg.mozImageSmoothingEnabled = false;
+
+var fg = document.createElement('canvas'); //most moving parts here, game foreground
+fg.width = 200;
+fg.height = 200;
+var ctxfg = fg.getContext('2d');
+ctxfg.imageSmoothingEnabled = false;
+ctxfg.mozImageSmoothingEnabled = false;
+
+var ui = document.createElement('canvas'); //ui elements
+ui.width = 200;
+ui.height = 200;
+var ctxui = ui.getContext('2d');
+ctxui.imageSmoothingEnabled = false;
+ctxui.mozImageSmoothingEnabled = false;
+
+var comp = document.createElement('canvas'); //our composite canvas before scaling
+comp.width = 200;
+comp.height = 200;
+var ctxcomp = comp.getContext('2d');
+ctxcomp.imageSmoothingEnabled = false;
+ctxcomp.mozImageSmoothingEnabled = false;
+
+
+var Const = {
         GAMEWIDTH: 200,
         GAMEHEIGHT: 200,
 
@@ -29,26 +73,28 @@ var GAME = {
         GLITCH: 0,
         GLITCHFACTOR: 0
 
-    },
+    };
 
-    events: {
+
+
+    var events =  {
         P_BUMP: 0
-    },
+    };
 
-    map: {
+    var map = {
 
         render: function(ctx) {
-            var g = GAME;
-            var data = g.Assets.map;
+
+            var data = Assets.map;
             for(var y = 0; y < data.length; y++){
                 for(var x = 0; x < data[y].length; x++){
                     ctx.fillStyle = "#779";
                     if(data[y][x]){
-                       //ctx.fillRect( x * g.const.GRID, y * g.const.GRID, g.const.GRID, g.const.GRID );
-                        GAME.Txt.text({
+                       //ctx.fillRect( x * Const.GRID, y * Const.GRID, Const.GRID, Const.GRID );
+                        Txt.text({
                             ctx: ctx,
-                            x: x * g.const.GRID,
-                            y: y * g.const.GRID,
+                            x: x * Const.GRID,
+                            y: y * Const.GRID,
                             text: "ox\nxo",
                             hspacing: 0,
                             vspacing: 0,
@@ -57,78 +103,34 @@ var GAME = {
                             scale: 1,
                             snap: 1,
                             render: 1,
-                            glitchChance: g.const.GLITCH,
-                            glitchFactor: g.const.GLITCHFACTOR
+                            glitchChance: Const.GLITCH,
+                            glitchFactor: Const.GLITCHFACTOR
                         });
                     }
 
                 }
             }
         }
-    },
+    };
 
-    init: function () {
+    function init() {
 
-
-        var g = GAME;
-
-
-        //canvas layers--------------------------
-        canvas = document.querySelector('#game'); //final output canvas, user-facing
-        ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
-        ctx.fillStyle = "#0F0";
-
-        g.bg = document.createElement('canvas'); //background
-        g.bg.width = 200;
-        g.bg.height = 200;
-        g.ctxbg = g.bg.getContext('2d');
-        g.ctxbg.imageSmoothingEnabled = false;
-        g.ctxbg.mozImageSmoothingEnabled = false;
-
-        g.fg = document.createElement('canvas'); //most moving parts here, game foreground
-        g.fg.width = 200;
-        g.fg.height = 200;
-        g.ctxfg = g.fg.getContext('2d');
-        g.ctxfg.imageSmoothingEnabled = false;
-        g.ctxfg.mozImageSmoothingEnabled = false;
-
-        g.ui = document.createElement('canvas'); //ui elements
-        g.ui.width = 200;
-        g.ui.height = 200;
-        g.ctxui = g.ui.getContext('2d');
-        g.ctxui.imageSmoothingEnabled = false;
-        g.ctxui.mozImageSmoothingEnabled = false;
-
-        g.comp = document.createElement('canvas'); //our composite canvas before scaling
-        g.comp.width = 200;
-        g.comp.height = 200;
-        g.ctxcomp = g.comp.getContext('2d');
-        g.ctxcomp.imageSmoothingEnabled = false;
-        g.ctxcomp.mozImageSmoothingEnabled = false;
 
         //temp append to figure out render
 /*        var debug = document.getElementById('debug')
-        debug.appendChild(g.bg);
-        debug.appendChild(g.fg);
-        debug.appendChild(g.ui);
-        g.bg.style="display:block";
-        g.fg.style="display:block";
-        g.ui.style="display:block";*/
+        debug.appendChild(bg);
+        debug.appendChild(fg);
+        debug.appendChild(ui);
+        bg.style="display:block";
+        fg.style="display:block";
+        ui.style="display:block";*/
 
 
 
         //---------------------------------------
-        g.ALL = [];
-        g.fps = 60;
-        g.step = 1 / g.fps;
-        g.dt = 0;
-        g.now = g.timestamp();
-        g.last = g.timestamp();
-        //console.log(g.last);
-        g.loadProgress = 0;
 
-        g.fsm = StateMachine.create({
+
+        fsm = StateMachine.create({
             initial: "init",
 
             events: [
@@ -141,160 +143,158 @@ var GAME = {
 
             callbacks: {
                 onenterboot: function (event, from, to) {
-                    GAME.states.boot.onenter(event, from, to)
+                    states.boot.onenter(event, from, to)
                 },
                 onentermenu: function (event, from, to) {
-                    GAME.states.menu.onenter(event, from, to)
+                    states.menu.onenter(event, from, to)
                 },
                 onleavemenu: function (event, from, to) {
-                    GAME.states.menu.onexit(event, from, to)
+                    states.menu.onexit(event, from, to)
                 },
                 onentergame: function (event, from, to) {
-                    GAME.states.game.onenter(event, from, to)
+                    states.game.onenter(event, from, to)
                 },
                 onleavegame: function (event, from, to) {
-                    GAME.states.game.onexit(event, from, to)
+                    states.onexit(event, from, to)
                 }
             }
-        }),
+        });
+
+
             //initialize keypress event listeners
             window.addEventListener('keyup', function (event) {
-                GAME.Key.onKeyup(event);
+                Key.onKeyup(event);
             }, false);
         window.addEventListener('keydown', function (event) {
-            GAME.Key.onKeydown(event);
+            Key.onKeydown(event);
             // console.log('key pressed');
         }, false);
 
         //Fire up the state machine
-        g.fsm.load();
+        fsm.load();
 
         //START it up!
-        g.loop();
-    },
+        loop();
+    };
 
 
-    timestamp: function () {
+    function timestamp() {
         return new Date().getTime();
-    },
+    }
 
     //sound rendering
-    initAudio: function () {
-        var g = GAME;
-        g.sounds = {};
-        g.sounds.loaded = 0;
-        g.sounds.total = 7;
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        g.audioCtx = new AudioContext;
+    initAudio = function() {
 
-        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.jump);
-        g.soundGen.createAudioBuffer(147+24, function(buffer) {
-            g.sounds.loaded++;
-            g.sounds.jump = buffer;
+        sounds.loaded = 0;
+        sounds.total = 7;
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext;
+
+        soundGen = new sonantx.SoundGenerator(Assets.sounds.jump);
+        soundGen.createAudioBuffer(147+24, function(buffer) {
+            sounds.loaded++;
+            sounds.jump = buffer;
         });
-        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound2);
-        g.soundGen.createAudioBuffer(147+24, function(buffer) {
-            g.sounds.loaded++;
-            g.sounds.es2 = buffer;
+        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound2);
+        soundGen.createAudioBuffer(147+24, function(buffer) {
+            sounds.loaded++;
+            sounds.es2 = buffer;
         });
-        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound3);
-        g.soundGen.createAudioBuffer(147+24, function(buffer) {
-            g.sounds.loaded++;
-            g.sounds.es3 = buffer;
+        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound3);
+        soundGen.createAudioBuffer(147+24, function(buffer) {
+            sounds.loaded++;
+            sounds.es3 = buffer;
         });
-        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound4);
-        g.soundGen.createAudioBuffer(147+24, function(buffer) {
-            g.sounds.loaded++;
-            g.sounds.es4 = buffer;
+        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound4);
+        soundGen.createAudioBuffer(147+24, function(buffer) {
+            sounds.loaded++;
+            sounds.es4 = buffer;
         });
-        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound5);
-        g.soundGen.createAudioBuffer(147+24, function(buffer) {
-            g.sounds.loaded++;
-            g.sounds.es5 = buffer;
+        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound5);
+        soundGen.createAudioBuffer(147+24, function(buffer) {
+            sounds.loaded++;
+            sounds.es5 = buffer;
         });
         //console.log('rendering music');
-        g.soundGen = new g.sonantx.MusicGenerator(g.Assets.song);
-        g.soundGen.createAudioBuffer(function (buffer) {
-            g.sounds.song = buffer;
-            g.sounds.loaded++;
+        soundGen = new sonantx.MusicGenerator(Assets.song);
+        soundGen.createAudioBuffer(function (buffer) {
+            sounds.song = buffer;
+            sounds.loaded++;
         });
 
-        g.soundGen = new g.sonantx.MusicGenerator(g.Assets.titlesong);
-        g.soundGen.createAudioBuffer(function (buffer) {
-            g.sounds.titlesong = buffer;
-            g.sounds.loaded++;
+        soundGen = new sonantx.MusicGenerator(Assets.titlesong);
+        soundGen.createAudioBuffer(function (buffer) {
+            sounds.titlesong = buffer;
+            sounds.loaded++;
         });
 
-    },
+    };
 
-    playSound: function(buffer, loop) {
-        var g = GAME;
-        var source = g.audioCtx.createBufferSource();
-        var gainNode = g.audioCtx.createGain();
+    function playSound(buffer, loop) {
+
+        var source = audioCtx.createBufferSource();
+        var gainNode = audioCtx.createGain();
         source.buffer = buffer;
         source.connect(gainNode);
-        gainNode.connect(g.audioCtx.destination);
+        gainNode.connect(audioCtx.destination);
         source.loop = loop;
         gainNode.gain.value = 1;
         source.start();
         return {volume: gainNode, sound: source};
-    },
+    }
 
-    loop: function () {
+    function loop() {
         //stats.begin();
 
         //onsole.log('loop running');
 
-        var g = GAME;
-        g.now = g.timestamp();
 
-        g.dt = g.dt + Math.min(1, (g.now - g.last) / 1000);
-        //console.log(g.dt + ' '+ g.step);
+        now = timestamp();
 
-        while (g.dt > g.step) {
-            g.dt = g.dt - g.step;
-            g.states[g.fsm.current].update(g.step);
+        dt = dt + Math.min(1, (now - last) / 1000);
+        //console.log(dt + ' '+ step);
+
+        while (dt > step) {
+            dt = dt - step;
+            states[fsm.current].update(step);
         }
 
-        g.states[g.fsm.current].render(g.ctxfg);
-        g.last = g.now;
+        states[fsm.current].render(ctxfg);
+        last = now;
 
         //----temp map render
-        g.ctxcomp.drawImage(g.bg, 0,0); //composite our canvas layers together
-        g.ctxcomp.drawImage(g.fg, 0,0);
+        ctxcomp.drawImage(bg, 0,0); //composite our canvas layers together
+        ctxcomp.drawImage(fg, 0,0);
 
 
-        //g.ctxcomp.save();
+        //ctxcomp.save();
         //ctx.globalAlpha = 0.9;
-        //g.ctxcomp.drawImage(g.fg, 2,2, 198, 198, 0, 0, 202, 202); //fun faux-3d effect, revisit this later
-        //g.ctxcomp.drawImage(g.fg, 4,4, 196, 196, 0, 0, 204, 204);
-        //g.ctxcomp.drawImage(g.fg, 6,6, 194, 194, 0, 0, 206, 206);
-        //g.ctxcomp.restore();
-        //g.ctxcomp.drawImage(g.fg, 8,8, 192, 192, 0, 0, 208, 208);
+        //ctxcomp.drawImage(fg, 2,2, 198, 198, 0, 0, 202, 202); //fun faux-3d effect, revisit this later
+        //ctxcomp.drawImage(fg, 4,4, 196, 196, 0, 0, 204, 204);
+        //ctxcomp.drawImage(fg, 6,6, 194, 194, 0, 0, 206, 206);
+        //ctxcomp.restore();
+        //ctxcomp.drawImage(fg, 8,8, 192, 192, 0, 0, 208, 208);
 
-        g.ctxcomp.drawImage(g.ui, 0,0);
+        ctxcomp.drawImage(ui, 0,0);
 
-        ctx.clearRect(0, 0, g.const.GAMEWIDTH * g.const.SCALE, g.const.GAMEHEIGHT * g.const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
+        ctx.clearRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
         ctx.drawImage(
-            g.comp, 0, 0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT, //source
-            0, 0, g.const.GAMEWIDTH * g.const.SCALE, g.const.GAMEHEIGHT * g.const.SCALE //destination, scaled 3x
+            comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
+            0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
         );
 
         //stats.end();
 
-        requestAnimationFrame(GAME.loop);
+        requestAnimationFrame(loop);
 
-    },
-
-    clear: function(g){
-        g.ctxcomp.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
-        g.ctxbg.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
-        g.ctxfg.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
-        g.ctxui.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
     }
 
-
-};
+    function clear(g){
+        ctxcomp.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+        ctxbg.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+        ctxfg.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+        ctxui.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+    }
 
 
 
