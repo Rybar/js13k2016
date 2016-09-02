@@ -7,13 +7,20 @@
         boot: {
 
             onenter: function() {
-                //-if(!GAME.sounds)GAME.initAudio(); //off for now, placeholder song works
+                if(!GAME.sounds)GAME.initAudio(); //off for now, placeholder song works
             },
 
             render: function(){
 
                 g.clear(GAME);
                 g.ALL = [];
+                g.loadmsg = ['INITIALIZING',
+                    'RENDERING SOUNDS...',
+                    'CONFIGURATING PIXELS....',
+                    'RETICULATING SPLINES...',
+                    'MESSAGE 4',
+                    'ALMOST THERE...',
+                    'READY. PRESS A TO CONTINUE'];
 
                 ctx.clearRect(0,0, g.const.GAMEWIDTH, g.const.GAMEHEIGHT);
                 g.ctxui.fillStyle = "#0f0";
@@ -21,7 +28,7 @@
                     ctx: g.ctxui,
                     x: 20,
                     y: 20,
-                    text: "READY...PRESS A",
+                    text: g.loadmsg[g.sounds.loaded],
                     hspacing: 2,
                     vspacing: 1,
                     halign: 'top',
@@ -39,7 +46,7 @@
                 if(GAME.Key.isDown(GAME.Key.r)) {
                     if(GAME.fsm.current)GAME.fsm.reset();
                 }
-                if(GAME.Key.isDown(GAME.Key.a)) {
+                if(GAME.sounds.loaded == GAME.sounds.total && GAME.Key.isDown(GAME.Key.a)) {
                     if(GAME.fsm.current == 'boot') GAME.fsm.ready();
                 }
 
@@ -48,10 +55,14 @@
         },
 
         menu: {
+
+            onenter: function(event, from, to){
+                if(event == 'ready') g.song1.start();
+            },
+
             render: function(){
 
                 g.clear(GAME);
-
 
                 g.ctxbg.fillStyle = "#444";
 
@@ -83,6 +94,8 @@
                     ctx.fillStyle = "#00ff00";
                     if(GAME.fsm.current == 'menu') GAME.fsm.play();
                 }
+
+
             }
 
         },
@@ -149,18 +162,17 @@
                     glitchChance: .4, glitchFactor: .5
                 });
 
+                GAME.map.render(g.ctxfg);
+
                 GAME.ALL.forEach(function(element, index, array){
                     element.render(g.ctxfg);
                 });
-                GAME.map.render(g.ctxfg);
 
 
 
             },
 
             update: function(step){
-
-
 
                 //reset from any state
                 if(GAME.Key.isDown(GAME.Key.r)) {

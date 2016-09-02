@@ -4,9 +4,9 @@
 //todo: particles!
 //todo: pubsub for enemy-player interactions
 
-var stats = new Stats();
+/*var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild(stats.dom);
+document.body.appendChild(stats.dom);*/
 
 var GAME = {
 
@@ -36,9 +36,6 @@ var GAME = {
     },
 
     map: {
-        data: [],
-
-        //body: new GAME.Entity(),
 
         render: function(ctx) {
             var g = GAME;
@@ -111,13 +108,13 @@ var GAME = {
         g.ctxcomp.mozImageSmoothingEnabled = false;
 
         //temp append to figure out render
-        var debug = document.getElementById('debug')
+/*        var debug = document.getElementById('debug')
         debug.appendChild(g.bg);
         debug.appendChild(g.fg);
         debug.appendChild(g.ui);
         g.bg.style="display:block";
         g.fg.style="display:block";
-        g.ui.style="display:block";
+        g.ui.style="display:block";*/
 
 
 
@@ -145,6 +142,9 @@ var GAME = {
             callbacks: {
                 onenterboot: function (event, from, to) {
                     GAME.states.boot.onenter(event, from, to)
+                },
+                onentermenu: function (event, from, to) {
+                    GAME.states.menu.onenter(event, from, to)
                 },
                 onentergame: function (event, from, to) {
                     GAME.states.game.onenter(event, from, to)
@@ -177,28 +177,49 @@ var GAME = {
         var g = GAME;
         g.sounds = {};
         g.sounds.loaded = 0;
-        g.sounds.total = 1;
+        g.sounds.total = 6;
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         g.audioCtx = new AudioContext;
 
-        //G.soundGen = new G.g.sonantx.SoundGenerator(G.audio.JUMP);
-        //G.soundGen.createAudioBuffer(147+24, function(buffer) {
-        //    G.sounds.loaded++;
-        //    G.sounds.jump = buffer;
-        //});
+        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound1);
+        g.soundGen.createAudioBuffer(147+24, function(buffer) {
+            g.sounds.loaded++;
+            g.sounds.es1 = buffer;
+        });
+        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound2);
+        g.soundGen.createAudioBuffer(147+24, function(buffer) {
+            g.sounds.loaded++;
+            g.sounds.es1 = buffer;
+        });
+        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound3);
+        g.soundGen.createAudioBuffer(147+24, function(buffer) {
+            g.sounds.loaded++;
+            g.sounds.es1 = buffer;
+        });
+        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound4);
+        g.soundGen.createAudioBuffer(147+24, function(buffer) {
+            g.sounds.loaded++;
+            g.sounds.es1 = buffer;
+        });
+        g.soundGen = new g.sonantx.SoundGenerator(g.Assets.sounds.engineSound5);
+        g.soundGen.createAudioBuffer(147+24, function(buffer) {
+            g.sounds.loaded++;
+            g.sounds.es1 = buffer;
+        });
         console.log('rendering music');
         g.song = new g.sonantx.MusicGenerator(g.Assets.song);
         g.song.createAudioBuffer(function (buffer) {
-            var source = g.audioCtx.createBufferSource();
-            source.buffer = buffer;
-            source.connect(g.audioCtx.destination);
-            source.start();
+            g.song1 = g.audioCtx.createBufferSource();
+            g.song1.buffer = buffer;
+            g.song1.connect(g.audioCtx.destination);
+            g.sounds.loaded++;
+            //g.song1.start();
         });
 
     },
 
     loop: function () {
-        stats.begin();
+        //stats.begin();
 
         //onsole.log('loop running');
 
@@ -218,7 +239,6 @@ var GAME = {
 
         //----temp map render
         g.ctxcomp.drawImage(g.bg, 0,0); //composite our canvas layers together
-
         g.ctxcomp.drawImage(g.fg, 0,0);
 
 
@@ -238,7 +258,7 @@ var GAME = {
             0, 0, g.const.GAMEWIDTH * g.const.SCALE, g.const.GAMEHEIGHT * g.const.SCALE //destination, scaled 3x
         );
 
-        stats.end();
+        //stats.end();
 
         requestAnimationFrame(GAME.loop);
 
@@ -253,6 +273,8 @@ var GAME = {
 
 
 };
+
+
 
 
 

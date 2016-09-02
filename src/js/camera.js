@@ -14,78 +14,79 @@
     // Camera constructor
     function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight)
     {
+        var that = this;
         // position of camera (left-top coordinate)
-        this.xView = xView || 0;
-        this.yView = yView || 0;
+        that.xView = xView || 0;
+        that.yView = yView || 0;
 
         // distance from followed object to border before camera starts move
-        this.xDeadZone = 0; // min distance to horizontal borders
-        this.yDeadZone = 0; // min distance to vertical borders
+        that.xDeadZone = 0; // min distance to horizontal borders
+        that.yDeadZone = 0; // min distance to vertical borders
 
         // viewport dimensions
-        this.wView = canvasWidth;
-        this.hView = canvasHeight;
+        that.wView = canvasWidth;
+        that.hView = canvasHeight;
 
         // allow camera to move in vertical and horizontal axis
-        this.axis = AXIS.BOTH;
+        that.axis = AXIS.BOTH;
 
         // object that should be followed
-        this.followed = null;
+        that.followed = null;
 
         // rectangle that represents the viewport
-        this.viewportRect = new g.Rectangle(this.xView, this.yView, this.wView, this.hView);
+        that.viewportRect = new g.Rectangle(that.xView, that.yView, that.wView, that.hView);
 
         // rectangle that represents the world's boundary (room's boundary)
-        this.worldRect = new g.Rectangle(0, 0, worldWidth, worldHeight);
+        that.worldRect = new g.Rectangle(0, 0, worldWidth, worldHeight);
     }
 
     // gameObject needs to have "x" and "y" properties (as world(or room) position)
     Camera.prototype.follow = function(gameObject, xDeadZone, yDeadZone)
     {
-        this.followed = gameObject;
-        this.xDeadZone = xDeadZone;
-        this.yDeadZone = yDeadZone;
+        that.followed = gameObject;
+        that.xDeadZone = xDeadZone;
+        that.yDeadZone = yDeadZone;
     }
 
     Camera.prototype.update = function()
     {
         // keep following the player (or other desired object)
-        if(this.followed != null)
+        if(that.followed != null)
         {
-            if(this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH)
+            if(that.axis == AXIS.HORIZONTAL || that.axis == AXIS.BOTH)
             {
                 // moves camera on horizontal axis based on followed object position
-                if(this.followed.xx - this.xView  + this.xDeadZone > this.wView)
-                    this.xView = this.followed.xx - (this.wView - this.xDeadZone);
-                else if(this.followed.xx  - this.xDeadZone < this.xView)
-                    this.xView = this.followed.xx  - this.xDeadZone;
+                if(that.followed.xx - that.xView  + that.xDeadZone > that.wView)
+                    that.xView = that.followed.xx - (that.wView - that.xDeadZone);
+                else if(that.followed.xx  - that.xDeadZone < that.xView)
+                    that.xView = that.followed.xx  - that.xDeadZone;
 
             }
-            if(this.axis == AXIS.VERTICAL || this.axis == AXIS.BOTH)
+            if(that.axis == AXIS.VERTICAL || that.axis == AXIS.BOTH)
             {
                 // moves camera on vertical axis based on followed object position
-                if(this.followed.yy - this.yView + this.yDeadZone > this.hView)
-                    this.yView = this.followed.yy - (this.hView - this.yDeadZone);
-                else if(this.followed.yy - this.yDeadZone < this.yView)
-                    this.yView = this.followed.yy - this.yDeadZone;
+                if(that.followed.yy - that.yView + that.yDeadZone > that.hView)
+                    that.yView = that.followed.yy - (that.hView - that.yDeadZone);
+                else if(that.followed.yy - that.yDeadZone < that.yView)
+                    that.yView = that.followed.yy - that.yDeadZone;
             }
 
         }
 
         // update viewportRect
-        this.viewportRect.set(this.xView, this.yView);
+        that.viewportRect.set(that.xView, that.yView);
 
         // don't let camera leaves the world's boundary
-        if(!this.viewportRect.within(this.worldRect))
+        if(!that.viewportRect.within(that.worldRect))
         {
-            if(this.viewportRect.left < this.worldRect.left)
-                this.xView = this.worldRect.left;
-            if(this.viewportRect.top < this.worldRect.top)
-                this.yView = this.worldRect.top;
-            if(this.viewportRect.right > this.worldRect.right)
-                this.xView = this.worldRect.right - this.wView;
-            if(this.viewportRect.bottom > this.worldRect.bottom)
-                this.yView = this.worldRect.bottom - this.hView;
+            if(that.viewportRect.left < that.worldRect.left)
+                that.xView = that.worldRect.left;
+            if(that.viewportRect.top < that.worldRect.top)
+                that.yView = that.worldRect.top;
+            if(that.viewportRect.right > that.worldRect.right)
+                that.xView = that.worldRect.right - that.wView;
+            if(that.viewportRect.bottom > that.worldRect.bottom)
+                that.yView = that.worldRect.bottom - that.hView;
         }
 
     };

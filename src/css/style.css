@@ -10,12 +10,6 @@ body {
   width: 600px;
   border: 1px solid #555;
 }
-#debugcontainer {
-  float: left;
-  width: 220px;
-  border: 3px solid #555;
-  border-radius: 3px;
-}
 canvas {
   border: 1px solid #555;
   margin: 10px;

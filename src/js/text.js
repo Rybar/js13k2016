@@ -1,5 +1,6 @@
 /*global GAME*/
-
+//todo: factor in global glitch variables
+//todo: modify glitch render to glitch both directions on both axes
 (function(g) {
 
 	g.Txt = {
@@ -10,14 +11,14 @@
 			var textLength = opt.text.length,
 				size = 5;
 			for (var i = 0; i < textLength; i++) {
-				var letter = GAME.Assets.letters[( opt.text.charAt(i) )] || GAME.assets.letters['unknown'];
+				var letter = GAME.Assets.letters[( opt.text.charAt(i) )] || GAME.Assets.letters['unknown'];
 				for (var y = 0; y < size; y++) {
 					//var g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
 					for (var x = 0; x < size; x++) {
 						if (letter[y][x] === 1) {
-							g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
+							var gl = (Math.random() > opt.glitchChance) * opt.glitchFactor;
 							//if(g)
-							opt.ctx.fillRect(opt.x + ( x * opt.scale ) + ( ( size * opt.scale ) + opt.hspacing ) * i, opt.y + y * opt.scale + g, opt.scale, opt.scale);
+							opt.ctx.fillRect(opt.x + ( x * opt.scale ) + gl + ( ( size * opt.scale ) + opt.hspacing ) * i, opt.y + y * opt.scale + gl, opt.scale, opt.scale);
 						}
 					}
 				}
@@ -90,8 +91,8 @@
 						x: x,
 						y: y,
 						text: line,
-						hspacing: opt.hspacing,
-						scale: opt.scale,
+						hspacing: opt.hspacing || 0,
+						scale: opt.scale || 1,
 						glitchChance: opt.glitchChance,
 						glitchFactor: opt.glitchFactor
 					});

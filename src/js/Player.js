@@ -16,6 +16,7 @@
             body: body,
             angle: 0,
             update: function(step){
+
                 //player movement
                 if(GAME.Key.isDown(GAME.Key.LEFT) || GAME.Key.isDown(GAME.Key.a))
                 {

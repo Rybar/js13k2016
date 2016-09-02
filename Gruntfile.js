@@ -34,21 +34,28 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js': 
 					[
-						'src/js/stats.js',
-						'src/js/assets.js',
-						'src/js/camera.js',
-						'src/js/rectangle.js',
-						'src/js/input.js',
-						'src/js/entity.js',
-						'src/js/pubsub.js',
-						'src/js/sonantx.js',
-						'src/js/text.js',
-						'src/js/util.js',
+
+						//'src/js/stats.js',
 						'src/js/statemachine.js',
+						'src/js/main.js',
+
+
 						'src/js/states/states.js',
 						'src/js/Player.js',
 						'src/js/Enemy.js',
-						'src/js/main.js'
+
+						'src/js/input.js',
+						'src/js/camera.js',
+						'src/js/rectangle.js',
+
+
+						'src/js/pubsub.js',
+						'src/js/assets.js',
+						'src/js/text.js',
+						'src/js/entity.js',
+						'src/js/sonantx.js',
+						'src/js/last.js',
+
 					]
 				},
 			},
@@ -70,21 +77,27 @@ module.exports = function(grunt) {
 				files: {
 					'build/compiled.js':
 						[
-							'src/js/stats.js',
-							'src/js/assets.js',
-							'src/js/camera.js',
-							'src/js/rectangle.js',
-							'src/js/input.js',
-							'src/js/entity.js',
-							'src/js/pubsub.js',
-							'src/js/sonantx.js',
-							'src/js/text.js',
-							'src/js/util.js',
+
+							//'src/js/stats.js',
 							'src/js/statemachine.js',
+							'src/js/main.js',
+
+
 							'src/js/states/states.js',
 							'src/js/Player.js',
 							'src/js/Enemy.js',
-							'src/js/main.js'
+
+							'src/js/input.js',
+							'src/js/camera.js',
+							'src/js/rectangle.js',
+
+
+							'src/js/pubsub.js',
+							'src/js/assets.js',
+							'src/js/text.js',
+							'src/js/entity.js',
+							'src/js/sonantx.js',
+							'src/js/last.js',
 						]
 				},
 			}

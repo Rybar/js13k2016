@@ -54,7 +54,7 @@
                     this.body.xx-this.body.radius +1,
                     this.body.yy-this.body.radius +1,
                     (this.body.radius*2)-1,
-                    (this.body.radius*2)-1);
+                    (this.body.radius*2)-3);
                 ctx.strokeRect(
                     this.body.xx-this.body.radius,
                     this.body.yy-this.body.radius,
@@ -66,11 +66,11 @@
                 ctx.fillStyle = "#FFF";  //eyes
                 ctx.fillRect(
                     this.body.xx-2,
-                    this.body.yy-2,
+                    this.body.yy-4,
                     1, 1);
                 ctx.fillRect(
                     this.body.xx+3,
-                    this.body.yy-2,
+                    this.body.yy-4,
                     1, 1);
 
             }
