@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 					port:3000,
 					hostname:'localhost',
 					bases:['./src'],
-					livereload:true
+					livereload:false
 				}
 			}
 		},
@@ -30,7 +30,6 @@ module.exports = function(grunt) {
 			dist : {
 				src  : [
 					'src/js/first.js',
-
 					'src/js/main.js',
 					'src/js/statemachine.js',
 					'src/js/states/states.js',
@@ -47,13 +46,37 @@ module.exports = function(grunt) {
 			}
 		},
 
+		'closure-compiler': {
+			frontend: {
+				closurePath: 'node_modules/google-closure-compiler',
+				js: 'src/js/concat.js',
+				jsOutputFile: 'build/game.js',
+				maxBuffer: 500,
+				options: {
+					compilation_level: 'ADVANCED_OPTIMIZATIONS',
+					language_in: 'ECMASCRIPT5'
+				}
+			}
+		},
+
+		inline: {
+			dist: {
+				options:{
+					tag: '',
+					cssmin: true
+				},
+				src: 'build//index.html',
+				dest: 'dist/index.html'
+			}
+		},
+
 		uglify: {
 			development: {
 				options: {
 					mangle: false,
 				},
 				files: {
-					'build/compiled.js': 
+					'build/compiled.js':
 					[
 						'src/js/concat.js'
 					]
@@ -71,7 +94,7 @@ module.exports = function(grunt) {
 						evaluate: true,
 						loops: true,
 						unused: true
-						
+
 					}
 				},
 				files: {
@@ -79,7 +102,7 @@ module.exports = function(grunt) {
 						[
 							'src/js/concat.js'
 						]
-				},
+				}
 			}
 		},
 		less: {
@@ -95,6 +118,7 @@ module.exports = function(grunt) {
 				compress: true,
 			}
 		},
+
 		htmlmin: {
 			development: {
 				options: {
@@ -115,22 +139,23 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+
 		compress: {
 			main: {
 				options: {
-					archive: 'build/game.zip',
+					archive: 'dist/game.zip',
 					mode: 'zip'
 				},
 				files: [{
 					expand: true,
 					flatten: true,
 					cwd: './',
-					src: ['build/*.css', 'build/*.js', 'build/*.html'],
+					src: ['dist/index.html'],
 					dest: './'
 				}]
 			}
 		}
-	});
+	})
 
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -139,12 +164,13 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-express');
 	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-parallel');
+	grunt.loadNpmTasks('grunt-inline');
+	grunt.loadNpmTasks('grunt-closure-compiler');
 
 	var fs = require('fs');
 	grunt.registerTask('sizecheck', function() {
 		var done = this.async();
-		fs.stat('build/game.zip', function(err, zip) {
+		fs.stat('dist/game.zip', function(err, zip) {
 			if (zip.size > 13312) {
 				//If size in bytes greater than 13kb
 				grunt.log.error("Zipped file greater than 13kb \x07 \n");
@@ -155,7 +181,8 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('default', ['watch']);
-	grunt.registerTask('build', ['concat:dist', 'uglify:development', 'less:development', 'htmlmin:development']);
-	grunt.registerTask('build-compress', ['concat:dist','uglify:compressed', 'less:compressed', 'htmlmin:compressed', 'compress:main', 'sizecheck']);
+	grunt.registerTask('build', ['concat:dist', 'uglify:development', 'less:development', 'htmlmin:development', 'inline:dist'] );
+	//grunt.registerTask('build-compress', ['concat:dist', 'less:compressed', 'htmlmin:compressed', 'inline:dist', 'compress:main', 'sizecheck']);
+	grunt.registerTask('build-compress', ['concat:dist','closure-compiler', 'less:compressed', 'htmlmin:compressed', 'inline:dist', 'compress:main', 'sizecheck']);
 	grunt.registerTask('server', ['concat:dist','express','watch']);
 };

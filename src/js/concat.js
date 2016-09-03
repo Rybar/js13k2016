@@ -516,8 +516,7 @@ var Const = {
         boot: {
 
             onenter: function() {
-                if(!sounds.jump)initAudio(); //off for now, placeholder song works
-                else that.audioCtx = {};
+                //if(!sounds.jump)initAudio(); //off for now, placeholder song works
             },
 
             render: function(){
@@ -539,7 +538,7 @@ var Const = {
                     ctx: ctxui,
                     x: 20,
                     y: 20,
-                    text: loadmsg[sounds.loaded],
+                    text: loadmsg[7], //loadmsg[sounds.loaded],
                     hspacing: 2,
                     vspacing: 1,
                     halign: 'top',
@@ -557,7 +556,7 @@ var Const = {
                 if(Key.isDown(Key.r)) {
                     if(fsm.current)fsm.reset();
                 }
-                if(sounds.loaded == sounds.total && Key.isDown(Key.a)) {
+                if( /*sounds.loaded == sounds.total && */ Key.isDown(Key.a)) {
                     if(fsm.current == 'boot') fsm.ready();
                 }
 
@@ -569,12 +568,12 @@ var Const = {
 
             onenter: function(event, from, to){
                 if(event == 'ready'){
-                    titlesong=playSound(sounds.titlesong, true);
+                    //titlesong=playSound(sounds.titlesong, true);
                 }
             },
 
             onexit: function(event, from, to){
-              if(event == 'play') titlesong.sound.stop();
+              //if(event == 'play') titlesong.sound.stop();
             },
 
             render: function(){
@@ -642,14 +641,14 @@ var Const = {
 
                         }
 
-                        song=playSound(sounds.song, true)
+                        //song=playSound(sounds.song, true)
                         break;
                 }
 
             },
 
             onexit: function(event, from, to){
-              titlesong.sound.stop();
+             // titlesong.sound.stop();
             },
 
             render: function(){
@@ -797,7 +796,7 @@ Player =  function(opt) {
                 if(Key.isDown(Key.UP) || Key.isDown(Key.w))
                 {
                     player.body.dy = -Const.P_JUMP;
-                    playSound(sounds.jump);
+                    //playSound(sounds.jump);
                 }
                 else if(Key.isDown(Key.DOWN) || Key.isDown(Key.s))
                 {
@@ -820,8 +819,10 @@ Player =  function(opt) {
                     scale: 1,
                     snap: 1,
                     render: 1,
-                    glitchChance: Math.min(Math.abs(this.body.dx * 10), .5),
-                    glitchFactor: 2
+                    glitch: {
+                        xch: 2, xamt: 1,
+                        ych: 2, yamt: 1,
+                    }
                 });
 
             }
@@ -836,7 +837,7 @@ Player =  function(opt) {
             collides: false,
             mapcollide: true,
             gravity: 0.06,
-            fillStyle: "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
+
 
         });
         body.setCoords(opt.x, opt.y);
@@ -844,9 +845,17 @@ Player =  function(opt) {
             color: '#f00',
             body: body,
             movingLeft: true,
+            stride: 0,
+            stridetick: 0,
             antennae: Math.random() > 0.5,
+            fill: "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
+            stroke: "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
 
             update: function(step){
+
+                this.stridetick+= .3;
+                this.stride = Math.sin(this.stridetick) * 2;
+                this.stride2 = Math.sin(this.stridetick - .8) * 1.3;
 
                 //patrol logic ----------------
                 if(this.movingLeft){
@@ -875,20 +884,20 @@ Player =  function(opt) {
             },
 
             render: function(ctx){
-                ctx.fillStyle = "#800";
-                ctx.strokeStyle = "#f00";
+                ctx.fillStyle = this.fill;
+                ctx.strokeStyle = this.stroke;
                 ctx.save();
-                ctx.translate(0.5, 0.5);
+                ctx.translate(0.5, -3.5);
 
                 ctx.fillStyle = opt.fillStyle;
                 ctx.fillRect(
                     this.body.xx-this.body.radius,
-                    this.body.yy-this.body.radius,
+                    this.body.yy-this.body.radius-this.stride,
                     (this.body.radius*2),
                     (this.body.radius*2));
                 ctx.strokeRect(
                     this.body.xx-this.body.radius,
-                    this.body.yy-this.body.radius,
+                    this.body.yy-this.body.radius-this.stride,
                     this.body.radius*2,
                     this.body.radius*2);
 
@@ -896,23 +905,23 @@ Player =  function(opt) {
 
                 ctx.fillStyle = "#FFF";  //eyes
                 ctx.fillRect(
-                    this.body.xx-3,
-                    this.body.yy-2,
-                    1, 1);
+                    this.body.xx-2,
+                    this.body.yy-4-this.stride2,
+                    1, 2);
                 ctx.fillRect(
-                    this.body.xx+3,
-                    this.body.yy-2,
-                    1, 1);
-                ctx.fillStyle = "#FF0"
+                    this.body.xx+2,
+                    this.body.yy-4-this.stride2,
+                    1, 2);
+                ctx.fillStyle = "#Fa0"
                 if(this.antennae) {
                     ctx.fillRect(
                         this.body.xx - 3,
-                        this.body.yy - 9,
+                        this.body.yy - 11 - this.stride2,
                         1,
                         5);
                     ctx.fillRect(
                         this.body.xx + 3,
-                        this.body.yy - 9,
+                        this.body.yy - 11 - this.stride2,
                         1,
                         5);
                 }
@@ -3237,8 +3246,8 @@ var Assets = {
 //todo: modify glitch render to glitch both directions on both axes
 	Txt = {
 		textLine: function (opt) {
-			if (!opt.glitchFactor) opt.glitchFactor = 0;
-			if (!opt.glitchChance) opt.glitchChance = 0;
+			if (!opt.glitch) opt.glitch = {
+				xch: 0, ych: 0, xamt: 0, yamt: 0};
 
 			var textLength = opt.text.length,
 				size = 5;
@@ -3248,9 +3257,10 @@ var Assets = {
 					//var g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
 					for (var x = 0; x < size; x++) {
 						if (letter[y][x] === 1) {
-							var gl = (Math.random() > opt.glitchChance) * opt.glitchFactor;
+							var gx = (Math.random() > opt.glitch.xch) * (Math.random()-.5) * opt.glitch.xamt;
+							var gy = (Math.random() > opt.glitch.ych) * (Math.random()-.5) * opt.glitch.yamt;
 							//if(g)
-							opt.ctx.fillRect(opt.x + ( x * opt.scale ) + gl + ( ( size * opt.scale ) + opt.hspacing ) * i, opt.y + y * opt.scale + gl, opt.scale, opt.scale);
+							opt.ctx.fillRect(opt.x + ( x * opt.scale ) + gx + ( ( size * opt.scale ) + opt.hspacing ) * i, opt.y + (y * opt.scale) + gy, opt.scale, opt.scale);
 						}
 					}
 				}

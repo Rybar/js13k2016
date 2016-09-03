@@ -30,7 +30,7 @@ Player =  function(opt) {
                 if(Key.isDown(Key.UP) || Key.isDown(Key.w))
                 {
                     player.body.dy = -Const.P_JUMP;
-                    playSound(sounds.jump);
+                    //playSound(sounds.jump);
                 }
                 else if(Key.isDown(Key.DOWN) || Key.isDown(Key.s))
                 {
@@ -53,8 +53,10 @@ Player =  function(opt) {
                     scale: 1,
                     snap: 1,
                     render: 1,
-                    glitchChance: Math.min(Math.abs(this.body.dx * 10), .5),
-                    glitchFactor: 2
+                    glitch: {
+                        xch: 2, xamt: 1,
+                        ych: 2, yamt: 1,
+                    }
                 });
 
             }

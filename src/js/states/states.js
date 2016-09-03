@@ -5,8 +5,7 @@
         boot: {
 
             onenter: function() {
-                if(!sounds.jump)initAudio(); //off for now, placeholder song works
-                else that.audioCtx = {};
+                //if(!sounds.jump)initAudio(); //off for now, placeholder song works
             },
 
             render: function(){
@@ -28,7 +27,7 @@
                     ctx: ctxui,
                     x: 20,
                     y: 20,
-                    text: loadmsg[sounds.loaded],
+                    text: loadmsg[7], //loadmsg[sounds.loaded],
                     hspacing: 2,
                     vspacing: 1,
                     halign: 'top',
@@ -46,7 +45,7 @@
                 if(Key.isDown(Key.r)) {
                     if(fsm.current)fsm.reset();
                 }
-                if(sounds.loaded == sounds.total && Key.isDown(Key.a)) {
+                if( /*sounds.loaded == sounds.total && */ Key.isDown(Key.a)) {
                     if(fsm.current == 'boot') fsm.ready();
                 }
 
@@ -58,12 +57,12 @@
 
             onenter: function(event, from, to){
                 if(event == 'ready'){
-                    titlesong=playSound(sounds.titlesong, true);
+                    //titlesong=playSound(sounds.titlesong, true);
                 }
             },
 
             onexit: function(event, from, to){
-              if(event == 'play') titlesong.sound.stop();
+              //if(event == 'play') titlesong.sound.stop();
             },
 
             render: function(){
@@ -131,14 +130,14 @@
 
                         }
 
-                        song=playSound(sounds.song, true)
+                        //song=playSound(sounds.song, true)
                         break;
                 }
 
             },
 
             onexit: function(event, from, to){
-              titlesong.sound.stop();
+             // titlesong.sound.stop();
             },
 
             render: function(){
