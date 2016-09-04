@@ -15,7 +15,7 @@
 			this.left = left;
             this.top = top;
             this.width = width || this.width;
-            this.height = height || this.height
+            this.height = height || this.height;
             this.right = (this.left + this.width);
             this.bottom = (this.top + this.height);
 		};

@@ -3,4 +3,6 @@
  */
 
 window.onload = init();
-}());
+}
+()
+)

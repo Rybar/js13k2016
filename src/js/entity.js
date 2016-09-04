@@ -54,7 +54,7 @@
 
         that.dead = true;
         ALL.splice(ALL.indexOf(that), 1);
-    }
+    };
 
     Entity.prototype.setCoords = function(x,y) {
         var that = this;
@@ -111,12 +111,12 @@
         var that = this;
 
         return that.hasCollision(that.cx-1, that.cy) && that.xr<=0.5;
-    }
+    };
     Entity.prototype.onWallRight = function() {
         var that = this;
 
         return that.hasCollision(that.cx+1, that.cy) && that.xr>=0.5;
-    }
+    };
 
     Entity.prototype.update = function() {
         var that = this;
@@ -217,5 +217,6 @@
 
         }
 
+    return this;
 
     };

@@ -43,7 +43,7 @@
         that.followed = gameObject;
         that.xDeadZone = xDeadZone;
         that.yDeadZone = yDeadZone;
-    }
+    };
 
     Camera.prototype.update = function()
     {

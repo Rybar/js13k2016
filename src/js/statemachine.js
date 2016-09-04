@@ -74,7 +74,7 @@
 
             fsm.current     = 'none';
             fsm.is          = function(state) { return (state instanceof Array) ? (state.indexOf(this.current) >= 0) : (this.current === state); };
-            fsm.can         = function(event) { return !this.transition && (map[event].hasOwnProperty(this.current) || map[event].hasOwnProperty(StateMachine.WILDCARD)); }
+            fsm.can         = function(event) { return !this.transition && (map[event].hasOwnProperty(this.current) || map[event].hasOwnProperty(StateMachine.WILDCARD)); };
             fsm.cannot      = function(event) { return !this.can(event); };
             fsm.transitions = function()      { return transitions[this.current]; };
             fsm.isFinished  = function()      { return this.is(terminal); };
@@ -172,7 +172,7 @@
                 this.transition.cancel = function() { // provide a way for caller to cancel async transition if desired (issue #22)
                     fsm.transition = null;
                     StateMachine.afterEvent(fsm, name, from, to, args);
-                }
+                };
 
                 var leave = StateMachine.leaveState(this, name, from, to, args);
                 if (false === leave) {

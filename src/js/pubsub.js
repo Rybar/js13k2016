@@ -27,8 +27,7 @@
             if (cfg) {
                 for(n = 0, max = cfg.length ; n < max ; n++)
                     on.subscribe(cfg[n].event, cfg[n].action);
-            };
-
+            }
         }
 
     };

@@ -1,6 +1,6 @@
 //todo: split out into separate modules
 /*global that*/
-    states =  {
+    var states =  {
 
         boot: {
 
@@ -113,7 +113,7 @@
 
                     case 'play':
 
-                        player = Player({
+                        player = new Player({
                             x: 100,
                             y: 100
                         });
@@ -121,13 +121,25 @@
 
                         var enemies = 10;
                         while(enemies--){
-                           var enemy = Enemy({
+                           var enemy = new Enemy({
                                 x: Math.floor(Math.random() * 200),
                                 y: Math.floor(Math.random() * 200),
                                 radius: Math.abs(Math.floor(Math.random() * 2) + 4)
                                  });
                             ALL.push(enemy);
 
+                        }
+
+                        var particles = 40;
+                        while(particles--){
+                            var particle = new Particle({
+                                x: Math.floor(Math.random() * 200),
+                                y: Math.floor(Math.random() * 200),
+                                radius: 3,
+                                life: 5,
+                                color: '#ff0'
+                            });
+                            ALL.push(particle);
                         }
 
                         //song=playSound(sounds.song, true)

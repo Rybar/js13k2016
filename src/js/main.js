@@ -175,10 +175,8 @@ var Const = {
 
         //START it up!
         loop();
-    };
-
-
-    function timestamp() {
+    }
+function timestamp() {
         return new Date().getTime();
     }
 

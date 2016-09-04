@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 				options:{
 					port:3000,
 					hostname:'localhost',
-					bases:['./src'],
+					bases:['./'],
 					livereload:false
 				}
 			}
@@ -38,24 +38,12 @@ module.exports = function(grunt) {
 					'src/js/input.js',
 					'src/js/assets.js',
 					'src/js/text.js',
+					'src/js/Particle.js',
 					'src/js/entity.js',
 					'src/js/sonantx.js',
 					'src/js/last.js'
 				],
-				dest : 'src/js/concat.js'
-			}
-		},
-
-		'closure-compiler': {
-			frontend: {
-				closurePath: 'node_modules/google-closure-compiler',
-				js: 'src/js/concat.js',
-				jsOutputFile: 'build/game.js',
-				maxBuffer: 500,
-				options: {
-					compilation_level: 'ADVANCED_OPTIMIZATIONS',
-					language_in: 'ECMASCRIPT5'
-				}
+				dest : 'build/concat.js'
 			}
 		},
 
@@ -65,7 +53,7 @@ module.exports = function(grunt) {
 					tag: '',
 					cssmin: true
 				},
-				src: 'build//index.html',
+				src: 'build/index.html',
 				dest: 'dist/index.html'
 			}
 		},
@@ -76,11 +64,11 @@ module.exports = function(grunt) {
 					mangle: false,
 				},
 				files: {
-					'build/compiled.js':
+					'build/game.js':
 					[
-						'src/js/concat.js'
+						'build/concat.js'
 					]
-				},
+				}
 			},
 			compressed: {
 				options: {
@@ -93,14 +81,21 @@ module.exports = function(grunt) {
 						properties: true,
 						evaluate: true,
 						loops: true,
-						unused: true
+						unused: true,
+						screw_ie8: true,
+						hoist_funs: false,
+						unsafe: true,
+						unsafe_comps: true,
+						conditionals: true,
+
+						//source-map:
 
 					}
 				},
 				files: {
-					'build/compiled.js':
+					'build/game.js':
 						[
-							'src/js/concat.js'
+							'build/concat.js'
 						]
 				}
 			}
@@ -113,7 +108,7 @@ module.exports = function(grunt) {
 			},
 			compressed: {
 				files: {
-					"src/css/style.css": "build/style.css"
+					"build/style.css": "src/css/*.less"
 				},
 				compress: true,
 			}
@@ -181,8 +176,8 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('default', ['watch']);
-	grunt.registerTask('build', ['concat:dist', 'uglify:development', 'less:development', 'htmlmin:development', 'inline:dist'] );
-	//grunt.registerTask('build-compress', ['concat:dist', 'less:compressed', 'htmlmin:compressed', 'inline:dist', 'compress:main', 'sizecheck']);
-	grunt.registerTask('build-compress', ['concat:dist','closure-compiler', 'less:compressed', 'htmlmin:compressed', 'inline:dist', 'compress:main', 'sizecheck']);
+	grunt.registerTask('build', ['concat:dist', 'less:development', 'htmlmin:development',] );
+	grunt.registerTask('build-compress', ['concat:dist', 'less:compressed', 'htmlmin:compressed', 'uglify:compressed', 'inline:dist', 'compress:main', 'sizecheck']);
+	//grunt.registerTask('build-compress', ['concat:dist','closure-compiler', 'less:compressed', 'htmlmin:compressed', 'inline:dist', 'compress:main', 'sizecheck']);
 	grunt.registerTask('server', ['concat:dist','express','watch']);
 };
