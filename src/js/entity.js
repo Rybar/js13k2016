@@ -31,12 +31,14 @@
         that.dx = 0;
         that.dy = 0;
 
+
         that.collided = false;
         that.ox = 0; //previous frame x
         that.oy = 0; //previous frame y -
 
         that.radius = opt.radius || 10;
         that.gravity = opt.gravity || 0;
+        that.bounce = opt.bounce || 0;
 
         that.frictX = opt.frictX || 0.92;
         that.frictY = opt.frictY || 0.94;
@@ -53,7 +55,7 @@
         var that = this;
 
         that.dead = true;
-        ALL.splice(ALL.indexOf(that), 1);
+        delete ALL.indexOf(that);
     };
 
     Entity.prototype.setCoords = function(x,y) {
@@ -118,8 +120,10 @@
         return that.hasCollision(that.cx+1, that.cy) && that.xr>=0.5;
     };
 
-    Entity.prototype.update = function() {
+    Entity.prototype.update = function(pool) {
         var that = this;
+
+        //if(this.type == 'particle')console.log('particle entity update');
 
 
         //console.log(that.type);
@@ -161,8 +165,8 @@
                 that.yr = 0.4;
             }
             if( that.hasCollision(that.cx, that.cy+1) && that.yr >= 0.7 ) { // ditto below
-                that.dy = 0;
-                that.yr = 0.7;
+                that.dy = that.bounce ? -that.dy : 0;
+                if(!that.bounce) that.yr = 0.7;
             }
             while(that.yr < 0) { //update the cell and fractional movement up
                 that.cy--;
@@ -175,11 +179,11 @@
 
             //object collision handling--------------------
 
-            for(var i = 0; i < ALL.length; i++) {
+            for(var i = 0; i < pool.length; i++) {
                 //console.log('in collision check loop');
-                var e = ALL[i].body;
+                var e = pool[i].body;
                 if(e.dead == false){
-                    if(e.collides){
+                    if(e.collides && this.collides){
                         //broad phase collision detection
                         if(e != that && Math.abs(that.cx-e.cx) <= 1 && Math.abs(that.cy-e.cy) <= 1 ){
 
@@ -216,7 +220,5 @@
 
 
         }
-
-    return this;
 
     };

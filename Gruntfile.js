@@ -30,6 +30,7 @@ module.exports = function(grunt) {
 			dist : {
 				src  : [
 					'src/js/first.js',
+					'src/js/stats.js',
 					'src/js/main.js',
 					'src/js/statemachine.js',
 					'src/js/states/states.js',
@@ -39,6 +40,7 @@ module.exports = function(grunt) {
 					'src/js/assets.js',
 					'src/js/text.js',
 					'src/js/Particle.js',
+					'src/js/Pool.js',
 					'src/js/entity.js',
 					'src/js/sonantx.js',
 					'src/js/last.js'

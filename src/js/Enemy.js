@@ -23,6 +23,19 @@
 
         Enemy.prototype.update = function(step){
 
+            particlePool.get({
+
+                x: this.body.xx  + (Math.random() * 6) - 3,
+                y: this.body.yy - 5,
+                mapcollide: false,
+                gravity: -.005,
+                bounce: true,
+                dx: (Math.random() -.5) *.1,
+                radius: 2,
+                color: "#a00",
+                life: .5
+            });
+
             this.stridetick+= .3;
             this.stride = Math.sin(this.stridetick) * 2;
             this.stride2 = Math.sin(this.stridetick - .8) * 1.3;

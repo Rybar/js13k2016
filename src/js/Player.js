@@ -10,6 +10,19 @@ Player =  function(opt) {
 
     Player.prototype.update = function(step){
 
+        particlePool.get({
+
+            x: this.body.xx - this.body.radius/2 + (Math.random() * 6) - 3,
+            y: this.body.yy - 5,
+            mapcollide: false,
+            gravity: -.006,
+            //dy: -this.body.dy,
+            //dx: //-this.body.dx * 0.5,
+            radius: 1,
+            color: "#0ff",
+            life: 1
+            });
+
         //player movement
         if(Key.isDown(Key.LEFT) || Key.isDown(Key.a))
         {
@@ -26,15 +39,7 @@ Player =  function(opt) {
         if(Key.isDown(Key.UP) || Key.isDown(Key.w))
         {
             player.body.dy = -Const.P_JUMP;
-            ALL.push( new Particle({
-                x: this.body.xx+ this.body.radius,
-                y: this.body.yy-5,
-                gravity: .001,
-                dy: -this.body.dy,
-                dx: Math.random(),
-                radius:3,
-                life:.5
-            }) )
+
             //playSound(sounds.jump);
         }
         else if(Key.isDown(Key.DOWN) || Key.isDown(Key.s))

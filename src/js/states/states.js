@@ -130,17 +130,6 @@
 
                         }
 
-                        var particles = 40;
-                        while(particles--){
-                            var particle = new Particle({
-                                x: Math.floor(Math.random() * 200),
-                                y: Math.floor(Math.random() * 200),
-                                radius: 3,
-                                life: 5,
-                                color: '#ff0'
-                            });
-                            ALL.push(particle);
-                        }
 
                         //song=playSound(sounds.song, true)
                         break;
@@ -213,11 +202,13 @@
 
 
                 //physics update
+                particlePool.use(); //I think this will update?
 
                 ALL.forEach(function(element, index, array){
                     element.update(step);
-                    element.body.update(step);
+                    element.body.update(ALL);
                 });
+
 
 
             }

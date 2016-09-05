@@ -4,9 +4,9 @@
 //todo: particles!
 //todo: pubsub for enemy-player interactions
 
-/*var stats = new Stats();
+var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild(stats.dom);*/
+document.body.appendChild(stats.dom);
 var ALL = [],
     fps = 60,
     step = 1 / fps,
@@ -15,9 +15,11 @@ var ALL = [],
     last = timestamp(),
     sounds = {},
     that = this,
-    fsm = {},
+    fsm = {};
+var particlePool = new Pool(1000, Particle);
 //console.log(last);
-    loadProgress = 0;
+var loadProgress = 0;
+window.watch = {};
 
 //canvas layers--------------------------
 var canvas = document.querySelector('#game'); //final output canvas, user-facing
@@ -125,7 +127,7 @@ var Const = {
         fg.style="display:block";
         ui.style="display:block";*/
 
-
+        particlePool.init();
 
         //---------------------------------------
 
@@ -242,7 +244,7 @@ function timestamp() {
     }
 
     function loop() {
-        //stats.begin();
+        stats.begin();
 
         //onsole.log('loop running');
 
@@ -252,12 +254,14 @@ function timestamp() {
         dt = dt + Math.min(1, (now - last) / 1000);
         //console.log(dt + ' '+ step);
 
+
+
+        states[fsm.current].render(ctxfg);
+
         while (dt > step) {
             dt = dt - step;
             states[fsm.current].update(step);
         }
-
-        states[fsm.current].render(ctxfg);
         last = now;
 
         //----temp map render
@@ -281,7 +285,7 @@ function timestamp() {
             0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
         );
 
-        //stats.end();
+        stats.end();
 
         requestAnimationFrame(loop);
 
