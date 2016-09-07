@@ -30,8 +30,13 @@ function Pool(poolSize, objClass) {
         if(!pool[size - 1].inUse) {
             pool[size - 1].spawn(opt);
             pool.unshift(pool.pop());
+            return pool[size -1];
         }
     };
+
+    this.getPool = function() {
+        return pool;
+    }
     /*
      * Uses any alive objects in the pool. If the call returns true,
      * the object is ready to be cleared and reused.

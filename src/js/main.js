@@ -1,8 +1,4 @@
 /*global GAME*/
-//todo: find some button render-logic code to steal. //keyboard only game
-//todo: bullets!
-//todo: particles!
-//todo: pubsub for enemy-player interactions
 
 var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -16,7 +12,15 @@ var ALL = [],
     sounds = {},
     that = this,
     fsm = {};
-var particlePool = new Pool(1000, Particle);
+
+window.all = ALL;
+
+var particlePool = new Pool(4000, Particle);
+
+var enemyPool = new Pool(50, Enemy);
+
+var bulletPool = new Pool(1000, Particle);
+
 //console.log(last);
 var loadProgress = 0;
 window.watch = {};
@@ -25,7 +29,6 @@ window.watch = {};
 var canvas = document.querySelector('#game'); //final output canvas, user-facing
 var ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
-ctx.fillStyle = "#0F0";
 
 var bg = document.createElement('canvas'); //background
 bg.width = 200;
@@ -57,246 +60,225 @@ ctxcomp.mozImageSmoothingEnabled = false;
 
 
 var Const = {
-        GAMEWIDTH: 200,
-        GAMEHEIGHT: 200,
+    GAMEWIDTH: 200,
+    GAMEHEIGHT: 200,
 
-        SCALE: 3,
+    SCALE: 3,
 
-        GRID: 10,
-        WIDTH: 20,
-        HEIGHT: 20,
+    GRID: 10,
+    WIDTH: 20,
+    HEIGHT: 20,
 
-        P_SPEED: 1,
-        P_JUMP: 0.5,
+    P_SPEED: 1,
+    P_JUMP: 1,
 
-        E_SPEED:.2,
-        E_JUMP: .25,
+    E_SPEED:.2,
+    E_JUMP: .25,
 
-        GLITCH: 0,
-        GLITCHFACTOR: 0
+    GLITCH: { xch: 0, xamt: 0, ych: 0, yamt: 0}
 
-    };
+};
 
+var enemySpawnRate = 2;
+var enemySpawnTimer = 0;
 
+var map = {
 
-    var events =  {
-        P_BUMP: 0
-    };
+    render: function(ctx) {
 
-    var map = {
-
-        render: function(ctx) {
-
-            var data = Assets.map;
-            for(var y = 0; y < data.length; y++){
-                for(var x = 0; x < data[y].length; x++){
-                    ctx.fillStyle = "#779";
-                    if(data[y][x]){
-                       //ctx.fillRect( x * Const.GRID, y * Const.GRID, Const.GRID, Const.GRID );
-                        Txt.text({
-                            ctx: ctx,
-                            x: x * Const.GRID,
-                            y: y * Const.GRID,
-                            text: "ox\nxo",
-                            hspacing: 0,
-                            vspacing: 0,
-                            halign: 'top',
-                            valign: 'left',
-                            scale: 1,
-                            snap: 1,
-                            render: 1,
-                            glitchChance: Const.GLITCH,
-                            glitchFactor: Const.GLITCHFACTOR
-                        });
-                    }
-
+        var data = Assets.map;
+        for(var y = 0; y < data.length; y++){
+            for(var x = 0; x < data[y].length; x++){
+                ctx.fillStyle = "#779";
+                if(data[y][x]){
+                    //ctx.fillRect( x * Const.GRID, y * Const.GRID, Const.GRID, Const.GRID );
+                    Txt.text({
+                        ctx: ctx,
+                        x: x * Const.GRID,
+                        y: y * Const.GRID,
+                        text: "ox\nxo",
+                        hspacing: 0,
+                        vspacing: 0,
+                        halign: 'top',
+                        valign: 'left',
+                        scale: 1,
+                        snap: 1,
+                        render: 1,
+                        glitch: {
+                            xch:.5, xamt:.5,
+                            ych: .5, yamt: .5}
+                    });
                 }
+
             }
         }
-    };
-
-    function init() {
-
-
-        //temp append to figure out render
-/*        var debug = document.getElementById('debug')
-        debug.appendChild(bg);
-        debug.appendChild(fg);
-        debug.appendChild(ui);
-        bg.style="display:block";
-        fg.style="display:block";
-        ui.style="display:block";*/
-
-        particlePool.init();
-
-        //---------------------------------------
-
-
-        fsm = StateMachine.create({
-            initial: "init",
-
-            events: [
-                {name: 'load', from: 'init', to: 'boot'},
-                {name: 'ready', from: 'boot', to: 'menu'},
-                {name: 'play', from: 'menu', to: 'game'},
-                {name: 'lose', from: 'game', to: 'gameover'},
-                {name: 'reset', from: ['init', 'boot', 'menu', 'gameover', 'game'], to: 'boot'},
-            ],
-
-            callbacks: {
-                onenterboot: function (event, from, to) {
-                    states.boot.onenter(event, from, to)
-                },
-                onentermenu: function (event, from, to) {
-                    states.menu.onenter(event, from, to)
-                },
-                onleavemenu: function (event, from, to) {
-                    states.menu.onexit(event, from, to)
-                },
-                onentergame: function (event, from, to) {
-                    states.game.onenter(event, from, to)
-                },
-                onleavegame: function (event, from, to) {
-                    states.onexit(event, from, to)
-                }
-            }
-        });
-
-
-            //initialize keypress event listeners
-            window.addEventListener('keyup', function (event) {
-                Key.onKeyup(event);
-            }, false);
-        window.addEventListener('keydown', function (event) {
-            Key.onKeydown(event);
-            // console.log('key pressed');
-        }, false);
-
-        //Fire up the state machine
-        fsm.load();
-
-        //START it up!
-        loop();
     }
+};
+
+function rnd(min, max){
+    return Math.random() * (max - min + 1) + min;
+}
+
+function init() {
+
+    particlePool.init();
+    bulletPool.init();
+    enemyPool.init();
+
+    //---------------------------------------
+
+
+    fsm = StateMachine.create({
+        initial: "init",
+
+        events: [
+            {name: 'load', from: 'init', to: 'boot'},
+            {name: 'ready', from: 'boot', to: 'menu'},
+            {name: 'play', from: 'menu', to: 'game'},
+            {name: 'lose', from: 'game', to: 'gameover'},
+            {name: 'reset', from: ['init', 'boot', 'menu', 'gameover', 'game'], to: 'boot'},
+        ],
+
+        callbacks: {
+            onenterboot: function (event, from, to) {
+                states.boot.onenter(event, from, to)
+            },
+            onentermenu: function (event, from, to) {
+                states.menu.onenter(event, from, to)
+            },
+            onleavemenu: function (event, from, to) {
+                states.menu.onexit(event, from, to)
+            },
+            onentergame: function (event, from, to) {
+                states.game.onenter(event, from, to)
+            },
+            onleavegame: function (event, from, to) {
+                states.onexit(event, from, to)
+            }
+        }
+    });
+
+
+    //initialize keypress event listeners
+    window.addEventListener('keyup', function (event) {
+        Key.onKeyup(event);
+    }, false);
+    window.addEventListener('keydown', function (event) {
+        Key.onKeydown(event);
+        // console.log('key pressed');
+    }, false);
+
+    //Fire up the state machine
+    fsm.load();
+
+    //START it up!
+    loop();
+}
 function timestamp() {
-        return new Date().getTime();
+    return new Date().getTime();
+}
+
+//sound rendering
+initAudio = function() {
+
+    sounds.loaded = 0;
+    sounds.total = 7;
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext;
+
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.jump);
+    soundGen.createAudioBuffer(147+24, function(buffer) {
+        sounds.loaded++;
+        sounds.jump = buffer;
+    });
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound2);
+    soundGen.createAudioBuffer(147+24, function(buffer) {
+        sounds.loaded++;
+        sounds.es2 = buffer;
+    });
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound3);
+    soundGen.createAudioBuffer(147+24, function(buffer) {
+        sounds.loaded++;
+        sounds.es3 = buffer;
+    });
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound4);
+    soundGen.createAudioBuffer(147+24, function(buffer) {
+        sounds.loaded++;
+        sounds.es4 = buffer;
+    });
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound5);
+    soundGen.createAudioBuffer(147+24, function(buffer) {
+        sounds.loaded++;
+        sounds.es5 = buffer;
+    });
+    //console.log('rendering music');
+    soundGen = new sonantx.MusicGenerator(Assets.song);
+    soundGen.createAudioBuffer(function (buffer) {
+        sounds.song = buffer;
+        sounds.loaded++;
+    });
+
+    soundGen = new sonantx.MusicGenerator(Assets.titlesong);
+    soundGen.createAudioBuffer(function (buffer) {
+        sounds.titlesong = buffer;
+        sounds.loaded++;
+    });
+
+};
+
+function playSound(buffer, loop) {
+
+    var source = audioCtx.createBufferSource();
+    var gainNode = audioCtx.createGain();
+    source.buffer = buffer;
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    source.loop = loop;
+    gainNode.gain.value = 1;
+    source.start();
+    return {volume: gainNode, sound: source};
+}
+
+function loop() {
+
+    stats.begin();
+
+    now = timestamp();
+
+    dt += Math.min(1, (now - last) / 1000);
+
+    states[fsm.current].render(ctxfg);
+
+    while (dt > step) {
+        dt -= step;
+        states[fsm.current].update(step);
     }
+    last = now;
 
-    //sound rendering
-    initAudio = function() {
+    ctxcomp.drawImage(bg, 0,0); //composite our canvas layers together
+    ctxcomp.drawImage(fg, 0,0);
+    ctxcomp.drawImage(ui, 0,0);
 
-        sounds.loaded = 0;
-        sounds.total = 7;
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext;
+    ctx.clearRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
+    ctx.drawImage(
+        comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
+        0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
+    );
 
-        soundGen = new sonantx.SoundGenerator(Assets.sounds.jump);
-        soundGen.createAudioBuffer(147+24, function(buffer) {
-            sounds.loaded++;
-            sounds.jump = buffer;
-        });
-        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound2);
-        soundGen.createAudioBuffer(147+24, function(buffer) {
-            sounds.loaded++;
-            sounds.es2 = buffer;
-        });
-        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound3);
-        soundGen.createAudioBuffer(147+24, function(buffer) {
-            sounds.loaded++;
-            sounds.es3 = buffer;
-        });
-        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound4);
-        soundGen.createAudioBuffer(147+24, function(buffer) {
-            sounds.loaded++;
-            sounds.es4 = buffer;
-        });
-        soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound5);
-        soundGen.createAudioBuffer(147+24, function(buffer) {
-            sounds.loaded++;
-            sounds.es5 = buffer;
-        });
-        //console.log('rendering music');
-        soundGen = new sonantx.MusicGenerator(Assets.song);
-        soundGen.createAudioBuffer(function (buffer) {
-            sounds.song = buffer;
-            sounds.loaded++;
-        });
+    stats.end();
 
-        soundGen = new sonantx.MusicGenerator(Assets.titlesong);
-        soundGen.createAudioBuffer(function (buffer) {
-            sounds.titlesong = buffer;
-            sounds.loaded++;
-        });
+    requestAnimationFrame(loop);
 
-    };
+}
 
-    function playSound(buffer, loop) {
-
-        var source = audioCtx.createBufferSource();
-        var gainNode = audioCtx.createGain();
-        source.buffer = buffer;
-        source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        source.loop = loop;
-        gainNode.gain.value = 1;
-        source.start();
-        return {volume: gainNode, sound: source};
-    }
-
-    function loop() {
-        stats.begin();
-
-        //onsole.log('loop running');
+function clear(g){
+    ctxcomp.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+    ctxbg.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+    ctxfg.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+    ctxui.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+}
 
 
-        now = timestamp();
-
-        dt = dt + Math.min(1, (now - last) / 1000);
-        //console.log(dt + ' '+ step);
-
-
-
-        states[fsm.current].render(ctxfg);
-
-        while (dt > step) {
-            dt = dt - step;
-            states[fsm.current].update(step);
-        }
-        last = now;
-
-        //----temp map render
-        ctxcomp.drawImage(bg, 0,0); //composite our canvas layers together
-        ctxcomp.drawImage(fg, 0,0);
-
-
-        //ctxcomp.save();
-        //ctx.globalAlpha = 0.9;
-        //ctxcomp.drawImage(fg, 2,2, 198, 198, 0, 0, 202, 202); //fun faux-3d effect, revisit this later
-        //ctxcomp.drawImage(fg, 4,4, 196, 196, 0, 0, 204, 204);
-        //ctxcomp.drawImage(fg, 6,6, 194, 194, 0, 0, 206, 206);
-        //ctxcomp.restore();
-        //ctxcomp.drawImage(fg, 8,8, 192, 192, 0, 0, 208, 208);
-
-        ctxcomp.drawImage(ui, 0,0);
-
-        ctx.clearRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
-        ctx.drawImage(
-            comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
-            0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
-        );
-
-        stats.end();
-
-        requestAnimationFrame(loop);
-
-    }
-
-    function clear(g){
-        ctxcomp.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
-        ctxbg.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
-        ctxfg.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
-        ctxui.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
-    }
 
 
 

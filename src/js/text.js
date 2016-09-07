@@ -3,8 +3,9 @@
 //todo: modify glitch render to glitch both directions on both axes
 	Txt = {
 		textLine: function (opt) {
-			if (!opt.glitch) opt.glitch = {
-				xch: 0, ych: 0, xamt: 0, yamt: 0};
+			//
+			gl = opt.glitch || {};
+
 
 			var textLength = opt.text.length,
 				size = 5;
@@ -14,8 +15,8 @@
 					//var g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
 					for (var x = 0; x < size; x++) {
 						if (letter[y][x] === 1) {
-							var gx = (Math.random() > opt.glitch.xch) * (Math.random()-.5) * opt.glitch.xamt;
-							var gy = (Math.random() > opt.glitch.ych) * (Math.random()-.5) * opt.glitch.yamt;
+							var gx = (Math.random() < gl.xch || 0) * (Math.random()-.5) * gl.xamt || 0;
+							var gy = (Math.random() < gl.ych || 0) * (Math.random()-.5) * gl.yamt || 0;
 							//if(g)
 							opt.ctx.fillRect(opt.x + ( x * opt.scale ) + gx + ( ( size * opt.scale ) + opt.hspacing ) * i, opt.y + (y * opt.scale) + gy, opt.scale, opt.scale);
 						}
@@ -92,8 +93,7 @@
 						text: line,
 						hspacing: opt.hspacing || 0,
 						scale: opt.scale || 1,
-						glitchChance: opt.glitchChance,
-						glitchFactor: opt.glitchFactor
+						glitch: opt.glitch
 					});
 				}
 			}

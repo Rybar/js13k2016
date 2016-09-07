@@ -1,72 +1,103 @@
+function Enemy() {
+    this.inUse = false;
 
-    Enemy = function(opt) {
-
-        this.opt = opt;
+    this.init = function () {
 
         this.body = new Entity({
-            radius: opt.radius,
-            type: 'enemy',
-            collides: false,
-            mapcollide: true,
-            gravity: 0.06,
+            dead: true,
+
+            gravity: 0,
 
         });
-        this.color = '#f00',
-            this.movingLeft = true;
+        this.body.setCoords(-1000, -1000);
+    };
+
+    Enemy.prototype.spawn = function (opt) {
+        this.inUse = true;
+        this.body.radius = Math.floor(rnd(3,6));
+
+        this.body.dead = false;
+        this.dead = false;
+        this.body.mapcollide = true;
+
+        this.body.gravity = .06;
+        this.movingLeft = Math.random > .5;
         this.stridetick = 0;
         this.antennae = Math.random() > 0.5;
-        this.fill = "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
-            this.stroke = "#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
+        this.fill = "#" +
+            "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
+
+            this.stroke = "#" +
+                "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00", //random shade of red
+
             this.body.setCoords(opt.x, opt.y);
 
     };
 
-        Enemy.prototype.update = function(step){
+    Enemy.prototype.use = function (step) {
 
-            particlePool.get({
+        if(this.dead){
 
-                x: this.body.xx  + (Math.random() * 6) - 3,
-                y: this.body.yy - 5,
-                mapcollide: false,
-                gravity: -.005,
-                bounce: true,
-                dx: (Math.random() -.5) *.1,
-                radius: 2,
-                color: "#a00",
-                life: .5
-            });
+            return true;
 
-            this.stridetick+= .3;
-            this.stride = Math.sin(this.stridetick) * 2;
-            this.stride2 = Math.sin(this.stridetick - .8) * 1.3;
+        } else {
 
-            //patrol logic ----------------
-            if(this.movingLeft){
-                this.body.dx -= Const.E_SPEED * step;
-            }
-            else this.body.dx += Const.E_SPEED * step;
+            this.render(ctxfg);
+            this.update(step);
+            this.body.update(step);
 
-            if(this.body.onWallLeft()){
-                this.movingLeft = false;
-            }
-            if(this.body.onWallRight()){
-                this.movingLeft = true;
-            }
-            if(this.body.collided){
-                this.movingLeft = !this.movingLeft;
-                this.body.collided = false;
-            }
+            return false;
+        }
 
-            //world wrap + anger stuff? crate-box style
-            if(this.body.yy > Const.GAMEHEIGHT){
-                this.body.setCoords(100, -5);
-            }
+    }
 
-            //console.log('enemy update');
-            //body.update();
-        },
 
-        Enemy.prototype.render =  function(ctx){
+    Enemy.prototype.update = function (step) {
+
+        //console.log(this.body);
+        this.stridetick += .3;
+        this.stride = Math.sin(this.stridetick) * 2;
+        this.stride2 = Math.sin(this.stridetick - .8) * 1.3;
+
+        //patrol logic ----------------
+        if (this.movingLeft) {
+            this.body.dx -= Const.E_SPEED * step;
+        }
+        else this.body.dx += Const.E_SPEED * step;
+
+        if (this.body.onWallLeft()) {
+            this.movingLeft = false;
+        }
+        if (this.body.onWallRight()) {
+            this.movingLeft = true;
+        }
+        if (this.body.collided) {
+            this.movingLeft = !this.movingLeft;
+            this.body.collided = false;
+        }
+
+        //world wrap + anger stuff? crate-box style
+        if (this.body.yy > Const.GAMEHEIGHT) {
+            this.body.setCoords(100, -5);
+        }
+
+
+    },
+
+        /*
+         * Resets the object values to default
+         */
+        Enemy.prototype.clear = function () {
+            this.inUse = false;
+            this.body.xx = -1000;
+            this.body.xx = -1000;
+            this.body.dead = true;
+            this.body.collides = false;
+            this.body.mapcollide = false;
+        };
+
+
+    Enemy.prototype.render = function (ctx) {
 
             ctx.fillStyle = this.fill;
             ctx.strokeStyle = this.stroke;
@@ -74,29 +105,29 @@
             ctx.translate(0.5, -3.5);
 
             ctx.fillRect(
-                this.body.xx-this.body.radius,
-                this.body.yy-this.body.radius-this.stride,
-                (this.body.radius*2),
-                (this.body.radius*2));
+                this.body.xx - this.body.radius,
+                this.body.yy - this.body.radius - this.stride,
+                (this.body.radius * 2),
+                (this.body.radius * 2));
             ctx.strokeRect(
-                this.body.xx-this.body.radius,
-                this.body.yy-this.body.radius-this.stride,
-                this.body.radius*2,
-                this.body.radius*2);
+                this.body.xx - this.body.radius,
+                this.body.yy - this.body.radius - this.stride,
+                this.body.radius * 2,
+                this.body.radius * 2);
 
             ctx.restore();//post stroke, put back the .5 translation so future rendering isnt on subpixels
 
             ctx.fillStyle = "#FFF";  //eyes
             ctx.fillRect(
-                this.body.xx-2,
-                this.body.yy-4-this.stride2,
+                this.body.xx - 2,
+                this.body.yy - 4 - this.stride2,
                 1, 2);
             ctx.fillRect(
-                this.body.xx+2,
-                this.body.yy-4-this.stride2,
+                this.body.xx + 2,
+                this.body.yy - 4 - this.stride2,
                 1, 2);
             ctx.fillStyle = "#Fa0";
-            if(this.antennae) {
+            if (this.antennae) {
                 ctx.fillRect(
                     this.body.xx - 3,
                     this.body.yy - 11 - this.stride2,
@@ -108,5 +139,8 @@
                     1,
                     5);
             }
-return this;
+            return this;
         };
+
+
+};

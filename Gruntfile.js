@@ -34,6 +34,8 @@ module.exports = function(grunt) {
 					'src/js/main.js',
 					'src/js/statemachine.js',
 					'src/js/states/states.js',
+					'src/js/states/gameState.js',
+
 					'src/js/Player.js',
 					'src/js/Enemy.js',
 					'src/js/input.js',
@@ -41,7 +43,7 @@ module.exports = function(grunt) {
 					'src/js/text.js',
 					'src/js/Particle.js',
 					'src/js/Pool.js',
-					'src/js/entity.js',
+					'src/js/Entity.js',
 					'src/js/sonantx.js',
 					'src/js/last.js'
 				],

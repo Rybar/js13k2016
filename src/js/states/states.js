@@ -42,6 +42,7 @@
             },
             update: function(){
 
+
                 if(Key.isDown(Key.r)) {
                     if(fsm.current)fsm.reset();
                 }
@@ -100,120 +101,26 @@
                     if(fsm.current == 'menu') fsm.play();
                 }
 
-
-            }
-
-        },
-
-        game: {
-
-            onenter: function(event, from, to){
-
-                switch(event) {
-
-                    case 'play':
-
-                        player = new Player({
-                            x: 100,
-                            y: 100
-                        });
-                        ALL.push(player);
-
-                        var enemies = 10;
-                        while(enemies--){
-                           var enemy = new Enemy({
-                                x: Math.floor(Math.random() * 200),
-                                y: Math.floor(Math.random() * 200),
-                                radius: Math.abs(Math.floor(Math.random() * 2) + 4)
-                                 });
-                            ALL.push(enemy);
-
-                        }
-
-
-                        //song=playSound(sounds.song, true)
-                        break;
-                }
-
-            },
-
-            onexit: function(event, from, to){
-             // titlesong.sound.stop();
-            },
-
-            render: function(){
-
-                clear(GAME);
-
-                //background-------------------
-                ctxbg.fillStyle = "#223";
-                Txt.text({
-                    ctx: ctxbg,
-                    x: 0,
-                    y: 0,
-                    text: "xzxz\nzxzx\nxzxz\nzxzx",
-                    hspacing: 0,
-                    vspacing: 0,
-                    halign: 'top',
-                    valign: 'left',
-                    scale: 10,
-                    snap: 1,
-                    render: 1,
-                    glitchChance: 0.05 + Const.GLITCH,
-                    glitchFactor: .05 + Const.GLITCHFACTOR,
+                particlePool.get({
+                    x: Math.random() * 200,
+                    y: 200,
+                    mapcollide: false,
+                    collides: false,
+                    gravity: -.05,
+                    //dy: -this.body.dy,
+                    //dx: //-this.body.dx * 0.5,
+                    radius: 10,
+                    color: "#0f0",
+                    life: 1
                 });
-                //UI text-----------------------
-                Txt.text({
-                    ctx: ctxui,
-                    x: 10,
-                    y: 10,
-                    text: "WASD OR ARROWS TO MOVE",
-                    hspacing: 2, vspacing: 1, halign: 'top', valign: 'left',
-                    scale: 1, snap: 1, render: 1,
-                    glitchChance: .4, glitchFactor: .5
-                });
-
-                map.render(ctxfg);
-
-                ALL.forEach(function(element, index, array){
-                    element.render(ctxfg);
-                });
-
-
-
-            },
-
-            update: function(step){
-
-                //reset from any state
-                if(Key.isDown(Key.r)) {
-                    if(fsm.current)fsm.reset();
-                }
-
-
-               if(Key.isDown(Key.f))
-               {
-                   Const.GLITCH += .01;
-               }
-                if(Key.isDown(Key.p))
-               {
-                   Const.GLITCHFACTOR += .01;
-               }
-
-
-                //physics update
-                particlePool.use(); //I think this will update?
-
-                ALL.forEach(function(element, index, array){
-                    element.update(step);
-                    element.body.update(ALL);
-                });
+                particlePool.use();
 
 
 
             }
 
         },
+
 
         gameover: {
             render: function(ctx){

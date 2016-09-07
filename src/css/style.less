@@ -9,7 +9,6 @@ body {
   margin: 0 auto;
   width: 600px;
   border: 1px solid #555;
-
 }
 
 canvas {
@@ -18,6 +17,9 @@ canvas {
   cursor: crosshair;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
+  image-rendering: optimizeSpeed;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
 }
+
