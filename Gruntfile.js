@@ -35,6 +35,7 @@ module.exports = function(grunt) {
 					'src/js/statemachine.js',
 					'src/js/states/states.js',
 					'src/js/states/gameState.js',
+					'src/js/states/menuState.js',
 
 					'src/js/Player.js',
 					'src/js/Enemy.js',
