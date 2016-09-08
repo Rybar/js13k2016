@@ -14,6 +14,7 @@ states.game = {
 
                 //song=playSound(sounds.song, true)
                 break;
+
         }
 
     },
@@ -32,7 +33,7 @@ states.game = {
             ctx: ctxbg,
             x: 0,
             y: 0,
-            text: "xzxz\nzxzx\nxzxz\nzxzx",
+            text: "xzxzxz\nzxzxzx\nxzxzxz\nzxzxzx",
             hspacing: 0,
             vspacing: 0,
             halign: 'top',
@@ -40,7 +41,7 @@ states.game = {
             scale: 10,
             snap: 1,
             render: 1,
-            glitch: {xch: 0, xamt: 0, ych:.1, yamt:2}
+            glitch: {xch: 0, xamt: 0, ych:0, yamt:0}
         });
         //UI text-----------------------
         Txt.text({
@@ -71,7 +72,7 @@ states.game = {
         if(enemySpawnTimer <= 0) {
 
             enemyPool.get({
-                x: 100, y: 30
+                x: Const.GAMEWIDTH/2, y: 0
             })
 
             enemySpawnTimer = enemySpawnRate;
@@ -90,6 +91,7 @@ states.game = {
         enemyPool.use();
         bulletPool.use();
 
+//----------enemy-bullet check----------------------------
         var enemies = enemyPool.getPool().slice();
         var bullets = bulletPool.getPool().slice();
 
@@ -107,18 +109,18 @@ states.game = {
                                 enemies[i].body, bullets[j].body)) {
                             enemies[i].dead = true;
                             bullets[j].dead = true;
-                            Asplode('bullet', bullets[i].body);
                         }
 
                     }
 
                 }
 
-
-
-
             }
         }
+//----------enemy-bullet check----------------------------
+
+
+
 
 
 

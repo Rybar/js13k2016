@@ -18,22 +18,51 @@ states.menu = {
         ctxbfillStyle = "#444";
 
 
-        ctx.fillStyle = "#fff";
+        ctxui.fillStyle = "#ff0";
         Txt.text({
             ctx: ctxui,
-            x: 20,
+            x: Const.GAMEWIDTH/2,
             y: 20,
-            text: "SUPER\nGLITCH\n",
+            text: "SUPER\n\nBOX",
             hspacing: 2,
-            vspacing: 1,
-            halign: 'top',
-            valign: 'center',
+            vspacing: 5,
+            halign: 'center',
+            valign: 'top',
+            scale: 5,
+            snap: 1,
+            render: 1,
+        });
+        Txt.text({
+            ctx: ctxui,
+            x: Const.GAMEWIDTH/2,
+            y: 20+25+5,
+            text: "GLITCH",
+            hspacing: 2,
+            vspacing: 2,
+            halign: 'center',
+            valign: 'top',
+            scale: 5,
+            snap: 1,
+            render: 1,
+            glitch: { xch: 0, xamt: 0, ych:.05, yamt:10}
+        });
+
+        ctxui.save();
+        ctxui.fillStyle = "#fff";
+        Txt.text({
+            ctx: ctxui,
+            x: Const.GAMEWIDTH/2,
+            y: 150,
+            text: "WASD / ARROWS: MOVE\nSPACE: SHOOT\nPRESS S TO PLAY",
+            hspacing: 2,
+            vspacing: 2,
+            halign: 'center',
+            valign: 'top',
             scale: 1,
             snap: 1,
             render: 1,
-            glitchChance: .01,
-            glitchFactor: 2
         });
+        ctxui.restore();
     },
 
     update: function(){
@@ -45,19 +74,24 @@ states.menu = {
             ctx.fillStyle = "#00ff00";
             if(fsm.current == 'menu') fsm.play();
         }
+        var p = 2;
+        while(p--){
+            particlePool.get({
+                x: Math.random() * Const.GAMEWIDTH,
+                y: 220,
+                mapcollide: false,
+                collides: false,
+                gravity: -.03,
+                //dy: -this.body.dy,
+                //dx: //-this.body.dx * 0.5,
+                radius: rnd(2,20),
+                color: "rgba(0,40,40, 1)",
+                stroke: "green",
+                life: 5
+            });
 
-        particlePool.get({
-            x: Math.random() * 200,
-            y: 200,
-            mapcollide: false,
-            collides: false,
-            gravity: -.05,
-            //dy: -this.body.dy,
-            //dx: //-this.body.dx * 0.5,
-            radius: 10,
-            color: "#0f0",
-            life: 1
-        });
+        }
+
         particlePool.use();
 
 

@@ -14,14 +14,16 @@ function Enemy() {
 
     Enemy.prototype.spawn = function (opt) {
         this.inUse = true;
-        this.body.radius = Math.floor(rnd(3,6));
+        this.body.radius = Math.floor(rnd(3,9));
 
         this.body.dead = false;
         this.dead = false;
         this.body.mapcollide = true;
+        this.onFire = false;
+        this.fireSpeed = 0;
 
         this.body.gravity = .06;
-        this.movingLeft = Math.random > .5;
+        this.movingLeft = Math.random() > .5;
         this.stridetick = 0;
         this.antennae = Math.random() > 0.5;
         this.fill = "#" +
@@ -37,7 +39,7 @@ function Enemy() {
     Enemy.prototype.use = function (step) {
 
         if(this.dead){
-
+            Asplode('Enemy', this.body)
             return true;
 
         } else {
@@ -54,16 +56,34 @@ function Enemy() {
 
     Enemy.prototype.update = function (step) {
 
+        if(this.onFire){
+
+            particlePool.get({
+                x: this.body.xx + this.body.radius - (Math.random() * this.body.radius * 2 ),
+                y: this.body.yy - this.body.radius - 2,
+                mapcollide: false,
+                gravity: -.03,
+                //dy: -this.body.dy,
+                //dx: //-this.body.dx * 0.5,
+                radius: 4,
+                color: "#a00",
+                life:.2
+            });
+
+        }
+
+
         //console.log(this.body);
         this.stridetick += .3;
         this.stride = Math.sin(this.stridetick) * 2;
         this.stride2 = Math.sin(this.stridetick - .8) * 1.3;
+        this.fireSpeed = this.onFire ? 2 : 1;
 
         //patrol logic ----------------
         if (this.movingLeft) {
-            this.body.dx -= Const.E_SPEED * step;
+            this.body.dx -= Const.E_SPEED * this.fireSpeed * step;
         }
-        else this.body.dx += Const.E_SPEED * step;
+        else this.body.dx += Const.E_SPEED * this.fireSpeed * step;
 
         if (this.body.onWallLeft()) {
             this.movingLeft = false;
@@ -79,6 +99,7 @@ function Enemy() {
         //world wrap + anger stuff? crate-box style
         if (this.body.yy > Const.GAMEHEIGHT) {
             this.body.setCoords(100, -5);
+            this.onFire = true;
         }
 
 

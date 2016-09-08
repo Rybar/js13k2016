@@ -5,13 +5,32 @@
         boot: {
 
             onenter: function() {
-                //if(!sounds.jump)initAudio(); //off for now, placeholder song works
+                if(!sounds.jump)initAudio(); //off for now, placeholder song works
             },
 
             render: function(){
 
                 clear(GAME);
                 ALL = [];
+
+                var i = Const.WIDTH;
+
+                while(i--){
+                    ctxui.fillStyle = "#020";
+                    Txt.text({
+                        ctx: ctxui,
+                        x: i * (Const.GRID+2),
+                        y: 70,
+                        text: rndTxt('wesdxz', 2) + "\n" + rndTxt('wesdxz', 2) + "\n" + rndTxt('wesdxz', 2),
+                        hspacing: 1,
+                        vspacing: 1,
+                        halign: 'top',
+                        valign: 'left',
+                        scale: 1,
+                        snap: 1,
+                        render: 1,
+                    });
+                }
                 var loadmsg = ['INITIALIZING',
                     'RENDERING SOUNDS...',
                     'CONFIGURATING PIXELS....',
@@ -22,16 +41,16 @@
                     'READY. PRESS A TO CONTINUE'];
 
                 ctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
-                ctxui.fillStyle = "#0f0";
+                ctxui.fillStyle = sounds.loaded==7 ? "#0f0" : "#080";
                 Txt.text({
                     ctx: ctxui,
-                    x: 20,
-                    y: 20,
-                    text: loadmsg[7], //loadmsg[sounds.loaded],
-                    hspacing: 2,
+                    x: 18,
+                    y: 79,
+                    text: loadmsg[sounds.loaded],
+                    hspacing: 1,
                     vspacing: 1,
                     halign: 'top',
-                    valign: 'left',
+                    valign: 'center',
                     scale: 1,
                     snap: 1,
                     render: 1,
@@ -40,7 +59,12 @@
                 });
 
             },
+
             update: function(){
+
+
+
+
 
 
                 if(Key.isDown(Key.r)) {

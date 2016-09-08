@@ -17,6 +17,7 @@ function Particle() {
         /*code to set values if any*/
         //console.log('particle spawned');
         this.inUse = true;
+        this.type = opt.type;
 
         this.life = opt.life || 1;
         this.remaining = opt.life || 1;
@@ -78,14 +79,12 @@ function Particle() {
     Particle.prototype.render = function (ctx) {
         var b = this.body;
 
-        ctx.fillStyle = this.color || '#fff'//"#" + "456789ABCDEF".charAt(Math.floor(Math.random() * 12)) + "00"; //random shade of red
-        //ctxcomp.fillRect(0,0,64,64);
+        ctx.fillStyle = this.color || '#fff'
+        ctx.strokeStyle = this.stroke;
         var rad = this.body.radius * (this.remaining / this.life);
         ctx.fillRect(
             b.xx - rad, b.yy - rad, rad, rad
         );
-
-        //watch.particle = {x: b.xx-rad, y: b.yy-rad, radius: rad, remaining: this.remaining, life: this.life}
     };
 
 }
@@ -98,7 +97,7 @@ function Asplode(type, B) {
             switch(type) {
 
                 default:
-                var p = 2;
+                var p = 20;
                     while(p--){
                         particlePool.get({
 

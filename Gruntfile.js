@@ -144,7 +144,8 @@ module.exports = function(grunt) {
 			main: {
 				options: {
 					archive: 'dist/game.zip',
-					mode: 'zip'
+					mode: 'zip',
+					level: 9,
 				},
 				files: [{
 					expand: true,

@@ -1,5 +1,9 @@
 /*global GAME*/
 
+var UNDEF = 'undefined';
+var PROTO = 'prototype';
+var CONSTRUCTOR = 'constructor';
+
 var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom);
@@ -23,50 +27,15 @@ var bulletPool = new Pool(1000, Particle);
 
 //console.log(last);
 var loadProgress = 0;
-window.watch = {};
-
-//canvas layers--------------------------
-var canvas = document.querySelector('#game'); //final output canvas, user-facing
-var ctx = canvas.getContext('2d');
-ctx.imageSmoothingEnabled = false;
-
-var bg = document.createElement('canvas'); //background
-bg.width = 200;
-bg.height = 200;
-var ctxbg = bg.getContext('2d');
-ctxbg.imageSmoothingEnabled = false;
-ctxbg.mozImageSmoothingEnabled = false;
-
-var fg = document.createElement('canvas'); //most moving parts here, game foreground
-fg.width = 200;
-fg.height = 200;
-var ctxfg = fg.getContext('2d');
-ctxfg.imageSmoothingEnabled = false;
-ctxfg.mozImageSmoothingEnabled = false;
-
-var ui = document.createElement('canvas'); //ui elements
-ui.width = 200;
-ui.height = 200;
-var ctxui = ui.getContext('2d');
-ctxui.imageSmoothingEnabled = false;
-ctxui.mozImageSmoothingEnabled = false;
-
-var comp = document.createElement('canvas'); //our composite canvas before scaling
-comp.width = 200;
-comp.height = 200;
-var ctxcomp = comp.getContext('2d');
-ctxcomp.imageSmoothingEnabled = false;
-ctxcomp.mozImageSmoothingEnabled = false;
-
 
 var Const = {
-    GAMEWIDTH: 200,
+    GAMEWIDTH: 270,
     GAMEHEIGHT: 200,
 
     SCALE: 3,
 
     GRID: 10,
-    WIDTH: 20,
+    WIDTH: 27,
     HEIGHT: 20,
 
     P_SPEED: 1,
@@ -75,11 +44,47 @@ var Const = {
     E_SPEED:.2,
     E_JUMP: .25,
 
-    GLITCH: { xch: 0, xamt: 0, ych: 0, yamt: 0}
+    GLITCH: { xch: .1, xamt: 0, ych: .1, yamt: 0}
 
 };
 
-var enemySpawnRate = 2;
+//canvas layers--------------------------
+var canvas = document.querySelector('#game'); //final output canvas, user-facing
+var ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+var bg = document.createElement('canvas'); //background
+bg.width = Const.GAMEWIDTH;
+bg.height = Const.GAMEHEIGHT;
+var ctxbg = bg.getContext('2d');
+ctxbg.imageSmoothingEnabled = false;
+ctxbg.mozImageSmoothingEnabled = false;
+
+var fg = document.createElement('canvas'); //most moving parts here, game foreground
+fg.width = Const.GAMEWIDTH;
+fg.height = Const.GAMEHEIGHT;
+var ctxfg = fg.getContext('2d');
+ctxfg.imageSmoothingEnabled = false;
+ctxfg.mozImageSmoothingEnabled = false;
+
+var ui = document.createElement('canvas'); //ui elements
+ui.width = Const.GAMEWIDTH;
+ui.height = Const.GAMEHEIGHT;
+var ctxui = ui.getContext('2d');
+ctxui.imageSmoothingEnabled = false;
+ctxui.mozImageSmoothingEnabled = false;
+
+var comp = document.createElement('canvas'); //our composite canvas before scaling
+comp.width = Const.GAMEWIDTH;
+comp.height = Const.GAMEHEIGHT;
+var ctxcomp = comp.getContext('2d');
+ctxcomp.imageSmoothingEnabled = false;
+ctxcomp.mozImageSmoothingEnabled = false;
+
+
+
+
+var enemySpawnRate = 1;
 var enemySpawnTimer = 0;
 
 var map = {
@@ -117,6 +122,17 @@ var map = {
 
 function rnd(min, max){
     return Math.random() * (max - min + 1) + min;
+}
+
+function rndTxt(string, amt) {
+    var text = '';
+    var i = amt;
+    while(i--) text += string.charAt(Math.floor(Math.random() * string.length));
+    return text;
+}
+
+function norm(value, min, max){
+    return (value - min) / (max - min);
 }
 
 function init() {
@@ -191,10 +207,10 @@ initAudio = function() {
         sounds.loaded++;
         sounds.jump = buffer;
     });
-    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound2);
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.shoot);
     soundGen.createAudioBuffer(147+24, function(buffer) {
         sounds.loaded++;
-        sounds.es2 = buffer;
+        sounds.shoot = buffer;
     });
     soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound3);
     soundGen.createAudioBuffer(147+24, function(buffer) {
@@ -226,15 +242,22 @@ initAudio = function() {
 
 };
 
-function playSound(buffer, loop) {
+function playSound(buffer, playbackRate, pan, loop) {
 
     var source = audioCtx.createBufferSource();
     var gainNode = audioCtx.createGain();
+    var panNode = audioCtx.createStereoPanner();
+
     source.buffer = buffer;
-    source.connect(gainNode);
+    source.connect(panNode);
+    panNode.connect(gainNode);
     gainNode.connect(audioCtx.destination);
+
+    //gainNode.connect(audioCtx.destination);
+    source.playbackRate.value = playbackRate;
     source.loop = loop;
     gainNode.gain.value = 1;
+    panNode.pan.value = pan;
     source.start();
     return {volume: gainNode, sound: source};
 }

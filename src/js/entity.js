@@ -135,7 +135,7 @@ Entity.prototype.update = function() {
     }
     if( this.hasCollision(this.cx, this.cy+1) && this.yr >= 0.7 ) { // ditto below
         this.dy = this.bounce ? -this.dy : 0;
-        if(!this.bounce) this.yr = 0.9;
+        if(!this.bounce) this.yr = 0.7;
     }
 
 
