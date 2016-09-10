@@ -9,7 +9,7 @@ states.game = {
             case 'play':
 
                 player = new Player({
-                    x: 100,
+                    x: Const.GAMEWIDTH/2,
                     y: 100
                 });
 
@@ -26,6 +26,12 @@ states.game = {
     },
 
     onexit: function(event, from, to){
+        //ctxcomp.save();
+        //ctxcomp.globalCompositeOperation = 'color';
+        ctxcomp.fillStyle = '#f00';
+        ctxcomp.fillRect(0,0, ctx.width, ctx.height);
+        ctxcomp.globalCompositeOperation = 'source-over';
+        //ctxcomp.restore();
         // titlesong.sound.stop();
     },
 
@@ -157,7 +163,7 @@ states.game = {
                     if (Entity.prototype.overlaps(
                             player.body, enemies[j].body)) {
                         player.die();
-                        score = 0;
+
                     }
             }
 

@@ -19,7 +19,7 @@ var ALL = [],
     that = this,
     fsm = {};
 
-window.all = ALL;
+var states = {};
 
 var particlePool = new Pool(2000, Particle);
 
@@ -106,6 +106,9 @@ function makeMosaic(){ //totally stealing from deepnight here.
             ctx.fillStyle = "#707070";
             ctx.fillRect(w*Const.SCALE, h*Const.SCALE + 2, 1, 1);
 
+            ctx.fillStyle = "#f8f8f8";
+            ctx.fillRect(w*Const.SCALE + 2, h*Const.SCALE, 1, 1);
+
         }
     }
     return {canvas: c, context: ctx};
@@ -176,7 +179,7 @@ function init() {
         events: [
             {name: 'load', from: 'init', to: 'boot'},
             {name: 'ready', from: 'boot', to: 'menu'},
-            {name: 'play', from: 'menu', to: 'game'},
+            {name: 'play', from: ['menu', 'gameover'], to: 'game'},
             {name: 'lose', from: 'game', to: 'gameover'},
             {name: 'reset', from: ['init', 'boot', 'menu', 'gameover', 'game'], to: 'boot'},
         ],
@@ -195,7 +198,7 @@ function init() {
                 states.game.onenter(event, from, to)
             },
             onleavegame: function (event, from, to) {
-                states.onexit(event, from, to)
+                states.game.onexit(event, from, to)
             }
         }
     });

@@ -117,6 +117,7 @@ Player =  function(opt) {
     Player.prototype.die = function(step) {
         Asplode('player', this.body);
         player.body.setCoords(100, 100)  //gameover eventually
+        fsm.lose();
 
 
     }

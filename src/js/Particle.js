@@ -18,6 +18,7 @@ function Particle() {
         //console.log('particle spawned');
         this.inUse = true;
         this.type = opt.type;
+        this.text = opt.text;
 
         this.life = opt.life || 1;
         this.remaining = opt.life || 1;
@@ -79,15 +80,40 @@ function Particle() {
 
     Particle.prototype.render = function (ctx) {
         var b = this.body;
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        ctx.fillStyle = this.color || '#fff'
-        ctx.strokeStyle = this.stroke;
-        var rad = this.body.radius * (this.remaining / this.life);
-        ctx.fillRect(
-            b.xx - rad, b.yy - rad, rad * 2, rad * 2
-        );
-        ctx.restore();
+        switch(this.type) {
+            default:
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen';
+                ctx.fillStyle = this.color || '#fff'
+                ctx.strokeStyle = this.stroke;
+                var rad = this.body.radius * (this.remaining / this.life);
+                ctx.fillRect(
+                    b.xx, b.yy - rad, rad * 2, rad * 2
+                );
+                ctx.restore();
+                break;
+
+            case 'text':
+                ctx.save();
+                ctx.fillStyle = this.color;
+                Txt.text({
+                    ctx: ctxui,
+                    x: b.xx,
+                    y: b.yy,
+                    text: "o",
+                    hspacing: 2,
+                    vspacing: 5,
+                    halign: 'center',
+                    valign: 'top',
+                    scale: 1,
+                    snap: 1,
+                    render: 1,
+                });
+                ;
+
+
+        }
+
     };
 
 }
