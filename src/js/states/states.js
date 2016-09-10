@@ -36,8 +36,8 @@
                     'CONFIGURATING PIXELS....',
                     'RETICULATING SPLINES...',
                     'MESSAGE 42',
-                    'PREPARING ENEMIES...',
-                    'ALMOST THERE...',
+                    'STIRRING THE PARTICLE POOL...',
+                    '...',
                     'READY. PRESS A TO CONTINUE'];
 
                 ctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);

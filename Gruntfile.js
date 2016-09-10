@@ -39,6 +39,7 @@ module.exports = function(grunt) {
 
 					'src/js/Player.js',
 					'src/js/Enemy.js',
+					'src/js/Glitchbox.js',
 					'src/js/input.js',
 					'src/js/assets.js',
 					'src/js/text.js',

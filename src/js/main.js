@@ -2,7 +2,9 @@
 
 var UNDEF = 'undefined';
 var PROTO = 'prototype';
-var CONSTRUCTOR = 'constructor';
+var CONSTRUCTOR = 'constructor'; //some crazy byte-saving trick I don't grok.
+
+var score = 0;
 
 var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -19,11 +21,11 @@ var ALL = [],
 
 window.all = ALL;
 
-var particlePool = new Pool(4000, Particle);
+var particlePool = new Pool(2000, Particle);
 
-var enemyPool = new Pool(50, Enemy);
+var enemyPool = new Pool(25, Enemy);
 
-var bulletPool = new Pool(1000, Particle);
+var bulletPool = new Pool(100, Particle);
 
 //console.log(last);
 var loadProgress = 0;
@@ -41,51 +43,77 @@ var Const = {
     P_SPEED: 1,
     P_JUMP: 1,
 
-    E_SPEED:.2,
+    E_SPEED:.5,
     E_JUMP: .25,
 
-    GLITCH: { xch: .1, xamt: 0, ych: .1, yamt: 0}
+    GLITCH: { xch: 0, xamt: 5, ych: 0, yamt: 10}
 
 };
+
+var enemySpawnRate = 2.25;
+var enemySpawnTimer = 0;
 
 //canvas layers--------------------------
 var canvas = document.querySelector('#game'); //final output canvas, user-facing
 var ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
+ctx.mozImageSmoothingEnabled = false;
 
 var bg = document.createElement('canvas'); //background
 bg.width = Const.GAMEWIDTH;
 bg.height = Const.GAMEHEIGHT;
 var ctxbg = bg.getContext('2d');
-ctxbg.imageSmoothingEnabled = false;
-ctxbg.mozImageSmoothingEnabled = false;
+//ctxbg.imageSmoothingEnabled = false;
+//ctxbg.mozImageSmoothingEnabled = false;
 
 var fg = document.createElement('canvas'); //most moving parts here, game foreground
 fg.width = Const.GAMEWIDTH;
 fg.height = Const.GAMEHEIGHT;
 var ctxfg = fg.getContext('2d');
-ctxfg.imageSmoothingEnabled = false;
-ctxfg.mozImageSmoothingEnabled = false;
+//ctxfg.imageSmoothingEnabled = false;
+//ctxfg.mozImageSmoothingEnabled = false;
 
 var ui = document.createElement('canvas'); //ui elements
 ui.width = Const.GAMEWIDTH;
 ui.height = Const.GAMEHEIGHT;
 var ctxui = ui.getContext('2d');
-ctxui.imageSmoothingEnabled = false;
-ctxui.mozImageSmoothingEnabled = false;
+//ctxui.imageSmoothingEnabled = false;
+//ctxui.mozImageSmoothingEnabled = false;
 
 var comp = document.createElement('canvas'); //our composite canvas before scaling
 comp.width = Const.GAMEWIDTH;
 comp.height = Const.GAMEHEIGHT;
 var ctxcomp = comp.getContext('2d');
-ctxcomp.imageSmoothingEnabled = false;
-ctxcomp.mozImageSmoothingEnabled = false;
+//ctxcomp.imageSmoothingEnabled = false;
+//ctxcomp.mozImageSmoothingEnabled = false;
+
+var mosaic = makeMosaic();
+
+function makeMosaic(){ //totally stealing from deepnight here.
+    var c = document.createElement('canvas');
+    var ctx = c.getContext('2d');
+    c.width = Const.GAMEWIDTH * Const.SCALE;
+    c.height = Const.GAMEHEIGHT * Const.SCALE;
+    ctx.fillStyle = "#808080";
+    ctx.fillRect(0,0, c.width, c.height);
+    for(var w = 0; w <= Const.GAMEWIDTH; w++){
+
+        for(var h = 0; h <= Const.GAMEHEIGHT; h++){
+
+            ctx.fillStyle = "#e0e0e0";
+            ctx.fillRect(w*Const.SCALE, h*Const.SCALE, 2, 2);
+
+            ctx.fillStyle = "#707070";
+            ctx.fillRect(w*Const.SCALE, h*Const.SCALE + 2, 1, 1);
+
+        }
+    }
+    return {canvas: c, context: ctx};
 
 
+}
 
 
-var enemySpawnRate = 1;
-var enemySpawnTimer = 0;
 
 var map = {
 
@@ -101,7 +129,7 @@ var map = {
                         ctx: ctx,
                         x: x * Const.GRID,
                         y: y * Const.GRID,
-                        text: "ox\nxo",
+                        text: "oO\nOo",
                         hspacing: 0,
                         vspacing: 0,
                         halign: 'top',
@@ -109,9 +137,7 @@ var map = {
                         scale: 1,
                         snap: 1,
                         render: 1,
-                        glitch: {
-                            xch:.5, xamt:.5,
-                            ych: .5, yamt: .5}
+                        glitch: Const.GLITCH
                     });
                 }
 
@@ -212,10 +238,10 @@ initAudio = function() {
         sounds.loaded++;
         sounds.shoot = buffer;
     });
-    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound3);
-    soundGen.createAudioBuffer(147+24, function(buffer) {
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.boom);
+    soundGen.createAudioBuffer(147, function(buffer) {
         sounds.loaded++;
-        sounds.es3 = buffer;
+        sounds.boom = buffer;
     });
     soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound4);
     soundGen.createAudioBuffer(147+24, function(buffer) {
@@ -278,15 +304,22 @@ function loop() {
     }
     last = now;
 
+
     ctxcomp.drawImage(bg, 0,0); //composite our canvas layers together
     ctxcomp.drawImage(fg, 0,0);
     ctxcomp.drawImage(ui, 0,0);
-
-    ctx.clearRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
+    ctx.save();
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
     ctx.drawImage(
         comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
         0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
     );
+    ctx.restore();
+    ctx.save();
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.drawImage(mosaic.canvas, 0,0);
+    ctx.restore();
 
     stats.end();
 

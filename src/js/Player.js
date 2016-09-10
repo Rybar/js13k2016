@@ -12,15 +12,22 @@ Player =  function(opt) {
         this.cooldown = 0;
         this.justJumped = false;
         this.justFired = false;
+        this.currentGun = null;
 
     Player.prototype.update = function(step){
 
-        this.cooldown -= step;
+        if(!this.currentGun) this.currentGun = this.makeGun();
+        player.currentGun.bullet.x = player.body.xx;
+        player.currentGun.bullet.y = player.body.yy;
+        player.currentGun.bullet.dx = this.fl ? -player.currentGun.velocity : player.currentGun.velocity;
+
+
+            this.cooldown -= step;
 
         particlePool.get({
 
-            x: this.body.xx - this.body.radius/2 + (Math.random() * 6) - 3,
-            y: this.body.yy - 5,
+            x: player.body.xx - player.body.radius/2 + (Math.random() * 6) - 3,
+            y: player.body.yy - 5,
             mapcollide: false,
             gravity: -.006,
             //dy: -this.body.dy,
@@ -45,7 +52,7 @@ Player =  function(opt) {
             player.body.dx += Const.P_SPEED * step;
         }
 
-        if(Key.isDown(Key.UP) || Key.isDown(Key.w))
+        if(Key.isDown(Key.UP) || Key.isDown(Key.w) || Key.isDown(Key.x))
         {
             if(this.body.onGround()){
 
@@ -69,26 +76,13 @@ Player =  function(opt) {
             player.body.setCoords(this.body.xx, 5);
         }
 
-        if(Key.isDown(Key.SPACE)) {
+        if( Key.isDown(Key.SPACE) || Key.isDown(Key.z) ) {
 
             if(this.cooldown <= 0) {
                 this.justFired = true;
-                bulletPool.get({
+                bulletPool.get(this.currentGun.bullet);
 
-                    x: this.body.xx + (this.fl ? -10 : 10),
-                    y: this.body.yy,
-                    mapcollide: true,
-                    collides: false,
-                    gravity: 0,
-                    frictX: 0, frictY: 0,
-                    dy: 0, //( Key.isDown(Key.UP) || Key.isDown(Key.W) )  ? -.5 : 0,
-                    dx: ( Key.isDown(Key.UP) || Key.isDown(Key.W) ) ? 0 : this.fl ? -.9 : .9,
-                    radius: 5,
-                    color: "#DF0",
-                    life: 1,
-                });
-
-                this.cooldown = .2
+                this.cooldown = this.currentGun.cooldown;
                 if (this.justFired){
                     this.justFired = false;
                     playSound(sounds.shoot, rnd(.95, 1.1), norm(player.body.xx, 0, Const.GAMEWIDTH));
@@ -103,8 +97,8 @@ Player =  function(opt) {
         ctx.fillStyle = "#0f0";
         Txt.text({
             ctx: ctx,
-            x: this.body.xx-this.body.radius,
-            y: this.body.yy-this.body.radius,
+            x: player.body.xx-player.body.radius,
+            y: player.body.yy-player.body.radius,
             text: "we\nsd",
             hspacing: 0,
             vspacing: 0,
@@ -124,5 +118,31 @@ Player =  function(opt) {
         Asplode('player', this.body);
         player.body.setCoords(100, 100)  //gameover eventually
 
+
+    }
+
+    Player.prototype.makeGun = function() {
+
+        var vel = rnd(.4,1.1);
+
+        var cooldown = rnd(.01,.2);
+
+        bullet = {
+
+            x: 0,
+            y: 0,
+            mapcollide: true,
+            collides: false,
+            gravity: 0,
+            frictX: 0, frictY: 0,
+            dy: 0, //( Key.isDown(Key.UP) || Key.isDown(Key.W) )  ? -.5 : 0,
+            dx: 0,
+            radius: Math.floor(rnd(1, 20)),
+            color: "#f80",
+            life: rnd(.5, 3),
+
+        }
+
+        return { bullet: bullet, cooldown: cooldown, velocity: vel};
 
     }

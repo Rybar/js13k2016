@@ -15,10 +15,7 @@ states.menu = {
 
         clear(GAME);
 
-        ctxbfillStyle = "#444";
-
-
-        ctxui.fillStyle = "#ff0";
+        ctxui.fillStyle = "#e80";
         Txt.text({
             ctx: ctxui,
             x: Const.GAMEWIDTH/2,
@@ -32,6 +29,7 @@ states.menu = {
             snap: 1,
             render: 1,
         });
+        ctxui.fillStyle = '#cc0';
         Txt.text({
             ctx: ctxui,
             x: Const.GAMEWIDTH/2,
@@ -44,7 +42,7 @@ states.menu = {
             scale: 5,
             snap: 1,
             render: 1,
-            glitch: { xch: 0, xamt: 0, ych:.05, yamt:10}
+            glitch: { xch:.1, xamt: 10, ych:0, yamt:0}
         });
 
         ctxui.save();

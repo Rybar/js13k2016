@@ -46,6 +46,7 @@ function Particle() {
      */
     Particle.prototype.use = function (step) {
         if (this.dead) {
+            Asplode('default', this.body);
             return true;
         } else {
             //watch.remaining = this.remaining + ' particle: ' + this.body.id ;
@@ -78,13 +79,15 @@ function Particle() {
 
     Particle.prototype.render = function (ctx) {
         var b = this.body;
-
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
         ctx.fillStyle = this.color || '#fff'
         ctx.strokeStyle = this.stroke;
         var rad = this.body.radius * (this.remaining / this.life);
         ctx.fillRect(
-            b.xx - rad, b.yy - rad, rad, rad
+            b.xx - rad, b.yy - rad, rad * 2, rad * 2
         );
+        ctx.restore();
     };
 
 }
@@ -97,7 +100,7 @@ function Asplode(type, B) {
             switch(type) {
 
                 default:
-                var p = 20;
+                    var p = 20;
                     while(p--){
                         particlePool.get({
 
@@ -108,7 +111,25 @@ function Asplode(type, B) {
                             dy: rnd(-.25, .25),
                             dx: rnd(-.25, .25),
                             radius: 3,
-                            color: "#ff0",
+                            color: "#e80",
+                            life: .25
+                        });
+                    }
+                    break;
+
+                case 'enemy':
+                var p = 20;
+                    while(p--){
+                        particlePool.get({
+
+                            x: B.xx || 100,
+                            y: B.yy || 100,
+                            mapcollide: false,
+
+                            dy: Math.cos(Math.random()) * 2,
+                            dx: Math.sin(Math.random()) * 2,
+                            radius: 2,
+                            color: "#e80",
                             life: .25
                         });
                     }

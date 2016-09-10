@@ -12,11 +12,11 @@ Super Glitch Box
     amount of glitch will escalate with: ?
         each time you collect a glitch.
 
-    score: how many glitch boxes collected
+    score: how many glitch boxes collected + enemies killed
         
     Glitch visual effects and escalation:
         graphical errors (in order of escalation)
-           background glitches -text renderer and 3d arrayp
+           background glitches -text renderer
            map glitches -from 3d array and text renderer
            text rendering glitches -text renderer
            sprite glitches -text renderer
@@ -34,15 +34,17 @@ TODO MVP:
 
 TODO CODE:
 
-    refactor object pool for multiple object types in one pool
-    refactor enemy and particle objects for generic object pool
-
-    https://gist.github.com/louisstow/5609992
-    https://github.com/photonstorm/phaser/blob/master/src/physics/arcade/World.js
-
-
-    pubsub event logic ? maybe not needed, super simple game
-
+   
     crates - glitch
+    
+    game over state, tweet score
+
+    pause, mute
+    
+    map and background polish
+
+    instructions, credits
+    
+    
     
     add a 3rd dimension to the map array containing options object for glitch effect controls

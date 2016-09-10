@@ -1,6 +1,7 @@
 /*global enemySpawnTimer */
 states.game = {
 
+
     onenter: function(event, from, to){
 
         switch(event) {
@@ -11,6 +12,11 @@ states.game = {
                     x: 100,
                     y: 100
                 });
+
+                glitchbox = new Glitchbox({
+                    x: 70,
+                    y: 100
+                })
 
                 //song=playSound(sounds.song, true)
                 break;
@@ -31,9 +37,9 @@ states.game = {
         ctxbg.fillStyle = "#223";
         Txt.text({
             ctx: ctxbg,
-            x: 0,
+            x: 10,
             y: 0,
-            text: "xzxzxz\nzxzxzx\nxzxzxz\nzxzxzx",
+            text: "o o o\n o o \no o o\n o o ",
             hspacing: 0,
             vspacing: 0,
             halign: 'top',
@@ -41,22 +47,23 @@ states.game = {
             scale: 10,
             snap: 1,
             render: 1,
-            glitch: {xch: 0, xamt: 0, ych:0, yamt:0}
+            glitch: Const.GLITCH
         });
         //UI text-----------------------
         Txt.text({
             ctx: ctxui,
-            x: 10,
+            x: Const.GAMEWIDTH/2,
             y: 10,
-            text: "WASD OR ARROWS TO MOVE",
-            hspacing: 2, vspacing: 1, halign: 'top', valign: 'left',
-            scale: 1, snap: 1, render: 1,
-            glitchChance: .4, glitchFactor: 3
+            text: score.toString(),
+            hspacing: 2, vspacing: 1, halign: 'center', valign: 'center',
+            scale: 2, snap: 1, render: 1,
+            glitch: Const.GLITCH
         });
 
         map.render(ctxfg);
 
         player.render(ctxfg);
+        glitchbox.render(ctxfg);
 
 
 
@@ -65,6 +72,10 @@ states.game = {
     },
 
     update: function(step){
+
+        Const.GLITCH.ych += .00001;
+        Const.GLITCH.xch += .00001;
+        Const.GLITCH.yamt = 5;
 
         enemySpawnTimer -= step;
         //console.log(enemySpawnTimer)
@@ -85,7 +96,10 @@ states.game = {
         }
 
         player.update(step);
+        glitchbox.update(step);
+
         player.body.update(step);
+        glitchbox.body.update(step);
 
         particlePool.use();
         enemyPool.use();
@@ -105,8 +119,22 @@ states.game = {
 
                     if(bullets[j].inUse) {
 
+                        //particlePool.get({
+                        //
+                        //    x: bullets[j].body.xx + (Math.random() * 2)-1,
+                        //    y: bullets[j].body.yy + (Math.random() * 2)-1,
+                        //    mapcollide: false,
+                        //    gravity: -.003,
+                        //    //dy: -this.body.dy,
+                        //    //dx: //-this.body.dx * 0.5,
+                        //    radius: 1,
+                        //    color: "#f80",
+                        //    life:.5
+                        //});
+
                         if (Entity.prototype.overlaps(
                                 enemies[i].body, bullets[j].body)) {
+                            //score +=10;
                             enemies[i].dead = true;
                             bullets[j].dead = true;
                         }
@@ -119,6 +147,25 @@ states.game = {
         }
 //----------enemy-bullet check----------------------------
 
+//------------enemy-player check---------------
+        for (var j = 0; j < enemies.length; j++)
+        {
+            //if(Math.abs(enemies[i].body.cx-bullets[j].body.cx) <= 1 && Math.abs(enemies[i].body.cy-bullets[j].body) <= 1 ) {
+
+            if(enemies[j].inUse) {
+
+                    if (Entity.prototype.overlaps(
+                            player.body, enemies[j].body)) {
+                        player.die();
+                        score = 0;
+                    }
+            }
+
+        }
+        if(Entity.prototype.overlaps(player.body, glitchbox.body)){
+            glitchbox.die();
+            player.currentGun = player.makeGun();
+        }
 
 
 
