@@ -128,28 +128,13 @@ var map = {
 
         var data = Assets.map;
 
-        var tiles = ['', 'oO\nOo', 'yy\nyy', 'yy\nyy' ]
+        var tiles = ['', 'oO\nOo', 'oo\noo', 'oo\noo' ]
         for(var y = 0; y < data.length; y++){
             for(var x = 0; x < data[y].length; x++){
 
                 if(data[y][x]){
-                //    //ctx.fillRect( x * Const.GRID, y * Const.GRID, Const.GRID, Const.GRID );
-                //    ctx.fillStyle = "#225";
-                //    Txt.text({
-                //        ctx: ctx,
-                //        x: x * Const.GRID,
-                //        y: y * Const.GRID + 2,
-                //        text: "yy\nyy",
-                //        hspacing: 0,
-                //        vspacing: 0,
-                //        halign: 'top',
-                //        valign: 'left',
-                //        scale: 1,
-                //        snap: 1,
-                //        render: 1,
-                //        glitch: Const.GLITCH
-                //    });
-                    ctx.fillStyle = "#779";
+
+                    ctx.fillStyle = "#75A";
                     Txt.text({
                         ctx: ctx,
                         x: x * Const.GRID,

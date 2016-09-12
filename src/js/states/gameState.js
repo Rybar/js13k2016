@@ -48,7 +48,7 @@ states.game = {
         clear(GAME);
 
         //background-------------------
-        ctxbg.fillStyle = "#223";
+        ctxbg.fillStyle = "#204";
         Txt.text({
             ctx: ctxbg,
             x: 10,
@@ -63,7 +63,7 @@ states.game = {
             render: 1,
             glitch: Const.GLITCH
         });
-        ctxbg.fillStyle = "#111";
+        ctxbg.fillStyle = "#102";
         if(!isFirefox)ctxbg.globalCompositeOperation = 'screen';
         Txt.text({
             ctx: ctxbg,

@@ -40,7 +40,7 @@ states.boot = {
             'READY. PRESS X TO CONTINUE'];
 
         finalctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
-        ctxui.fillStyle = sounds.loaded==7 ? "#00e" : "#080";
+        ctxui.fillStyle = sounds.loaded==7 ? "#0d0" : "#080";
         Txt.text({
             ctx: ctxui,
             x: 18,

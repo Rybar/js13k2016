@@ -43,7 +43,7 @@ Glitchbox =  function(opt) {
 
         particlePool.get({
 
-            x: this.body.xx - this.body.radius + 1 + (Math.random() * 15),
+            x: this.body.xx - this.body.radius - 1 + (Math.random() * 15),
             y: this.body.yy - 5,
             mapcollide: false,
             gravity: -.006,
@@ -60,10 +60,10 @@ Glitchbox =  function(opt) {
             x: this.body.xx - this.body.radius,
             y: this.body.yy - this.body.radius - 3,
             text: "dos\noOo\neow",
-            hspacing: -1,
+            hspacing: -1 + Const.GLITCH.ych * 5,
             vspacing: -1,
             halign: 'top',
-            valign: 'left',
+            valign: 'center',
             scale: 1,
             snap: 1,
             render: 1,
