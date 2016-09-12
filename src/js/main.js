@@ -46,18 +46,19 @@ var Const = {
     E_SPEED:.5,
     E_JUMP: .25,
 
-    GLITCH: { xch: 0, xamt: 5, ych: 0, yamt: 10}
+    GLITCH: { xch: 0, xamt: 10, ych: 0, yamt: 10}
 
 };
 
-var enemySpawnRate = 2.25;
+var enemySpawnRate = 2;
 var enemySpawnTimer = 0;
+var gameOverCountdown = 15;
 
 //canvas layers--------------------------
 var canvas = document.querySelector('#game'); //final output canvas, user-facing
-var ctx = canvas.getContext('2d');
-ctx.imageSmoothingEnabled = false;
-ctx.mozImageSmoothingEnabled = false;
+var finalctx = canvas.getContext('2d');
+finalctx.imageSmoothingEnabled = false;
+finalctx.mozImageSmoothingEnabled = false;
 
 var bg = document.createElement('canvas'); //background
 bg.width = Const.GAMEWIDTH;
@@ -123,16 +124,34 @@ var map = {
     render: function(ctx) {
 
         var data = Assets.map;
+
+        var tiles = ['', 'oO\nOo', 'yy\nyy', 'yy\nyy' ]
         for(var y = 0; y < data.length; y++){
             for(var x = 0; x < data[y].length; x++){
-                ctx.fillStyle = "#779";
+
                 if(data[y][x]){
-                    //ctx.fillRect( x * Const.GRID, y * Const.GRID, Const.GRID, Const.GRID );
+                //    //ctx.fillRect( x * Const.GRID, y * Const.GRID, Const.GRID, Const.GRID );
+                //    ctx.fillStyle = "#225";
+                //    Txt.text({
+                //        ctx: ctx,
+                //        x: x * Const.GRID,
+                //        y: y * Const.GRID + 2,
+                //        text: "yy\nyy",
+                //        hspacing: 0,
+                //        vspacing: 0,
+                //        halign: 'top',
+                //        valign: 'left',
+                //        scale: 1,
+                //        snap: 1,
+                //        render: 1,
+                //        glitch: Const.GLITCH
+                //    });
+                    ctx.fillStyle = "#779";
                     Txt.text({
                         ctx: ctx,
                         x: x * Const.GRID,
                         y: y * Const.GRID,
-                        text: "oO\nOo",
+                        text: tiles[data[y][x]],
                         hspacing: 0,
                         vspacing: 0,
                         halign: 'top',
@@ -199,6 +218,9 @@ function init() {
             },
             onleavegame: function (event, from, to) {
                 states.game.onexit(event, from, to)
+            },
+            onentergameover: function (event, from, to) {
+                states.gameover.onenter(event, from, to)
             }
         }
     });
@@ -237,7 +259,7 @@ initAudio = function() {
         sounds.jump = buffer;
     });
     soundGen = new sonantx.SoundGenerator(Assets.sounds.shoot);
-    soundGen.createAudioBuffer(147+24, function(buffer) {
+    soundGen.createAudioBuffer(147, function(buffer) {
         sounds.loaded++;
         sounds.shoot = buffer;
     });
@@ -299,6 +321,8 @@ function loop() {
 
     dt += Math.min(1, (now - last) / 1000);
 
+
+
     states[fsm.current].render(ctxfg);
 
     while (dt > step) {
@@ -308,21 +332,29 @@ function loop() {
     last = now;
 
 
+
+
     ctxcomp.drawImage(bg, 0,0); //composite our canvas layers together
     ctxcomp.drawImage(fg, 0,0);
     ctxcomp.drawImage(ui, 0,0);
-    ctx.save();
-    ctx.fillStyle = "black"
-    ctx.fillRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
-    ctx.drawImage(
+    finalctx.save();
+    finalctx.fillStyle = "black";
+    finalctx.fillRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
+    finalctx.drawImage(
         comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
         0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
     );
-    ctx.restore();
-    ctx.save();
-    ctx.globalCompositeOperation = 'overlay';
-    ctx.drawImage(mosaic.canvas, 0,0);
-    ctx.restore();
+    finalctx.restore();
+    finalctx.save();
+
+    finalctx.globalCompositeOperation = 'overlay';
+    finalctx.drawImage(mosaic.canvas, 0,0);
+
+    finalctx.restore();
+
+
+    //ctx.globalCompositeOperation = 'source-over';
+
 
     stats.end();
 

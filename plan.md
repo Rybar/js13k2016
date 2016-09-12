@@ -25,26 +25,34 @@ Super Glitch Box
 
         
            
-TODO MVP:
-  
-  super crate box game mechanic
-    falling patrolling enemies DONE
-    crates -not.
-    1 gun type
+LAST SPRINT: 
 
-TODO CODE:
-
-   
-    crates - glitch
-    
-    game over state, tweet score
-
-    pause, mute
-    
-    map and background polish
-
-    instructions, credits
     
     
+    player look polish
+        better sprite
+            something assymetrical at least-flips when moving left/right
+        jump 'dust'
+        
+    gun polish
+        bring up the low end on fire rate
+        random array of bullet colors
+        smoke particles
+        
+        
+    gameover state:
+    add 'share' and 'menu' logic
+        tweet 'I just collected x.." 
+        
+    pause state
+    mute music function
+        
     
-    add a 3rd dimension to the map array containing options object for glitch effect controls
+    more sound design
+    -sound effects:
+        glitch collect
+        player death
+        1 or 2 more gun sounds
+    MUSIC
+    
+    

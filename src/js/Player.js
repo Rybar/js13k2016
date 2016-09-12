@@ -1,10 +1,10 @@
 Player =  function(opt) {
     this.body = new Entity({
-            radius: 10,
+            radius: 8,
             type: 'player',
             collides: true,
             mapcollide: true,
-            gravity: .05
+            gravity: .04
         });
         this.body.setCoords(opt.x,opt.y);
         /** facing left */
@@ -24,18 +24,20 @@ Player =  function(opt) {
 
             this.cooldown -= step;
 
-        particlePool.get({
-
-            x: player.body.xx - player.body.radius/2 + (Math.random() * 6) - 3,
-            y: player.body.yy - 5,
-            mapcollide: false,
-            gravity: -.006,
-            //dy: -this.body.dy,
-            //dx: //-this.body.dx * 0.5,
-            radius: 1,
-            color: "#0ff",
-            life: 1
-            });
+        //particlePool.get({
+        //
+        //    x: player.body.xx - player.body.radius/2 + (Math.random() * 6) - 3,
+        //    y: player.body.yy - 5,
+        //    mapcollide: false,
+        //    gravity: -.006,
+        //    //dy: -this.body.dy,
+        //    //dx: //-this.body.dx * 0.5,
+        //    radius: 1,
+        //    color: "#0ff",
+        //    life: 1
+        //    //type: 'text',
+        //    //text: 'o'
+        //    });
 
         //player movement
         if(Key.isDown(Key.LEFT) || Key.isDown(Key.a))
@@ -62,7 +64,7 @@ Player =  function(opt) {
             }
             if(player.justJumped){
                 player.justJumped = false;
-                playSound(sounds.jump, rnd(0.95, 1.1), norm(player.body.xx, 0, Const.GAMEWIDTH), false);
+                playSound(sounds.jump, rnd(0.7, 1.1), norm(player.body.xx, 0, Const.GAMEWIDTH), false);
             }
 
 
@@ -94,24 +96,34 @@ Player =  function(opt) {
 };
 
     Player.prototype.render = function(ctx){
-        ctx.fillStyle = "#0f0";
+        ctx.save();
+        ctx.fillStyle = "#ea0"
+        if(player.fl){
+
+            ctx.scale(-1,1); //mirror it
+            //ctx.translate(-270, 0) //move to where are player is
+        }
+
         Txt.text({
             ctx: ctx,
-            x: player.body.xx-player.body.radius,
-            y: player.body.yy-player.body.radius,
-            text: "we\nsd",
-            hspacing: 0,
-            vspacing: 0,
+            x: player.fl ? (player.body.xx+player.body.radius) * -1 : player.body.xx-player.body.radius,
+            y: player.body.yy-player.body.radius-3,
+            //x: 0,
+            //y: 0,
+            text: "tyu\nghj\nbnm",
+            hspacing: Math.abs( player.body.dx * 15 ),
+            vspacing: Math.abs( player.body.dy * 15 ),
             halign: 'top',
             valign: 'left',
             scale: 1,
             snap: 1,
             render: 1,
             glitch: {
-                xch:.1, xamt: 1,
-                ych:.1, yamt: 5,
+                xch:Math.abs( player.body.dx ), xamt: 5,
+                ych:Math.abs( player.body.dy ), yamt: 5,
             }
         });
+        ctx.restore();
     };
 
     Player.prototype.die = function(step) {
@@ -124,9 +136,9 @@ Player =  function(opt) {
 
     Player.prototype.makeGun = function() {
 
-        var vel = rnd(.4,1.1);
+        var vel = Math.random() * 1.1 + .5;
 
-        var cooldown = rnd(.01,.2);
+        var cooldown = Math.random() * .2 + .02;
 
         bullet = {
 
@@ -138,7 +150,7 @@ Player =  function(opt) {
             frictX: 0, frictY: 0,
             dy: 0, //( Key.isDown(Key.UP) || Key.isDown(Key.W) )  ? -.5 : 0,
             dx: 0,
-            radius: Math.floor(rnd(1, 20)),
+            radius: Math.floor(rnd(1, 15)),
             color: "#f80",
             life: rnd(.5, 3),
 

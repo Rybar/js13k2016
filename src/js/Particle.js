@@ -19,6 +19,7 @@ function Particle() {
         this.inUse = true;
         this.type = opt.type;
         this.text = opt.text;
+        this.ctx = opt.ctx;
 
         this.life = opt.life || 1;
         this.remaining = opt.life || 1;
@@ -48,6 +49,7 @@ function Particle() {
     Particle.prototype.use = function (step) {
         if (this.dead) {
             Asplode('default', this.body);
+            Asplode('smoke', this.body);
             return true;
         } else {
             //watch.remaining = this.remaining + ' particle: ' + this.body.id ;
@@ -58,6 +60,8 @@ function Particle() {
             }
 
             this.render(ctxfg);
+            this.body.dx += Math.random() * Const.GLITCH.xch - Const.GLITCH.xch/2;
+            this.body.dy += Math.random() * Const.GLITCH.xch - Const.GLITCH.xch/2;
             this.body.update();
 
 
@@ -80,11 +84,13 @@ function Particle() {
 
     Particle.prototype.render = function (ctx) {
         var b = this.body;
+        if(this.ctx) ctx = this.ctx;
         switch(this.type) {
-            default:
+
+            case 'glitch':
                 ctx.save();
                 ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = this.color || '#fff'
+                ctx.fillStyle = '#' + rndTxt('5678890ABCDE',3);
                 ctx.strokeStyle = this.stroke;
                 var rad = this.body.radius * (this.remaining / this.life);
                 ctx.fillRect(
@@ -94,7 +100,6 @@ function Particle() {
                 break;
 
             case 'text':
-                ctx.save();
                 ctx.fillStyle = this.color;
                 Txt.text({
                     ctx: ctxui,
@@ -109,7 +114,32 @@ function Particle() {
                     snap: 1,
                     render: 1,
                 });
-                ;
+                break;
+
+            case 'smoke':
+                var alpha = this.remaining / this.life;
+
+                ctx.fillStyle = 'rgba(200,200,200,' + alpha + ')';
+                ctx.fillRect(
+                    b.xx-this.body.radius, b.yy-this.body.radius, this.body.radius * 2, this.body.radius * 2
+                );
+
+                break;
+
+            default:
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen';
+                ctx.fillStyle = this.color || '#fff'
+                ctx.strokeStyle = this.stroke;
+                var rad = this.body.radius * (this.remaining / this.life);
+                ctx.fillRect(
+                    b.xx, b.yy - rad, rad * 2, rad * 2
+                );
+                ctx.restore();
+                break;
+
+
+
 
 
         }
@@ -134,8 +164,8 @@ function Asplode(type, B) {
                             y: B.yy || 100,
                             mapcollide: false,
 
-                            dy: rnd(-.25, .25),
-                            dx: rnd(-.25, .25),
+                            dy: Math.random() * 2 - 1,
+                            dx: Math.random() * 2 - 1,
                             radius: 3,
                             color: "#e80",
                             life: .25
@@ -144,22 +174,43 @@ function Asplode(type, B) {
                     break;
 
                 case 'enemy':
-                var p = 20;
+
+                var p = 10;
                     while(p--){
                         particlePool.get({
 
                             x: B.xx || 100,
                             y: B.yy || 100,
                             mapcollide: false,
+                            gravity: .03,
 
-                            dy: Math.cos(Math.random()) * 2,
-                            dx: Math.sin(Math.random()) * 2,
-                            radius: 2,
-                            color: "#e80",
-                            life: .25
+                            dy: Math.random() * 2 - 1,
+                            dx: Math.random() * 2 - 1,
+                            radius: 3,
+                            color: "#800",
+                            life: .2
                         });
                     }
                 break;
+
+                case 'smoke':
+                    var p = 10;
+                    while(p--){
+                        particlePool.get({
+
+                            x: B.xx + Math.random() * 6 - 3 || 100,
+                            y: B.yy + Math.random() * 6 - 3 || 100,
+                            mapcollide: false,
+                            type: 'smoke',
+                            gravity: -.003,
+                            dy: Math.random() * -.1,
+                            dx: Math.random() * .1 - .05,
+                            radius: 5,
+                            life:.75,
+
+                        });
+                    }
+                    break;
             }
 
 }

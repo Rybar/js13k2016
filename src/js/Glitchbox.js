@@ -3,7 +3,7 @@
  */
 Glitchbox =  function(opt) {
     this.body = new Entity({
-        radius: 10,
+        radius: 8,
         collides: false,
         mapcollide: true,
         gravity: .05
@@ -17,10 +17,20 @@ Glitchbox =  function(opt) {
     this.type = 'glitchbox'
     this.bump = 0;
     this.locations = [
-        {cx: 8, cy: 15},
-        {cx: 24, cy: 15},
-        {cx: 8, cy: 4},
-        {cx: 24, cy: 4},
+        {cx: 10, cy: 2},
+        {cx: 6, cy: 2},
+        {cx: 2, cy: 7},
+        {cx: 5, cy: 7},
+        {cx: 8, cy: 7},
+        {cx: 18, cy: 7},
+        {cx: 24, cy: 7},
+        {cx: 9, cy: 12},
+        {cx: 14, cy: 12},
+        {cx: 18, cy: 12},
+        {cx: 2, cy: 16},
+        {cx: 10, cy: 17},
+        {cx: 18, cy: 17},
+        {cx: 24, cy: 16},
 
     ];
 };
@@ -33,18 +43,18 @@ Glitchbox =  function(opt) {
 
         particlePool.get({
 
-            x: this.body.xx - this.body.radius / 2 + (Math.random() * 6) - 3,
+            x: this.body.xx - this.body.radius + 1 + (Math.random() * 15),
             y: this.body.yy - 5,
             mapcollide: false,
             gravity: -.006,
             radius: 1,
-            color: "#0ff",
+            type: 'glitch',
             life: 1
         });
     };
 
     Glitchbox.prototype.render = function (ctx) {
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = '#' + rndTxt('456789ABCDEF', 3);
         Txt.text({
             ctx: ctx,
             x: this.body.xx - this.body.radius,
@@ -66,7 +76,7 @@ Glitchbox =  function(opt) {
         score++
         Const.GLITCH.ych += .005;
         Asplode('glitchbox', this.body);
-        console.log(this.locations);
+        //console.log(this.locations);
         var loc = this.locations[Math.floor(rnd(0, this.locations.length - 1))];
         glitchbox.body.setCoords(loc.cx * Const.GRID, loc.cy * Const.GRID);
     };

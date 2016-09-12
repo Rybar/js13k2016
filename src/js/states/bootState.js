@@ -37,9 +37,9 @@ states.boot = {
             'MESSAGE 42',
             'STIRRING THE PARTICLE POOL...',
             'BREEDING BADDIES...',
-            'READY. PRESS A TO CONTINUE'];
+            'READY. PRESS X TO CONTINUE'];
 
-        ctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+        finalctx.clearRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
         ctxui.fillStyle = sounds.loaded==7 ? "#0f0" : "#080";
         Txt.text({
             ctx: ctxui,
@@ -64,8 +64,12 @@ states.boot = {
         if(Key.isDown(Key.r)) {
             if(fsm.current)fsm.reset();
         }
-        if( /*sounds.loaded == sounds.total && */ Key.isDown(Key.a)) {
-            if(fsm.current == 'boot') fsm.ready();
+
+        if( sounds.loaded == sounds.total &&  Key.isDown(Key.x)) {
+            if(fsm.current == 'boot') {
+                //playSound(sounds.es4, 1, 0, false);
+                fsm.ready();
+            }
         }
 
     }

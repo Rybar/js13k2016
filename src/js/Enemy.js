@@ -43,7 +43,8 @@ function Enemy() {
     Enemy.prototype.use = function (step) {
 
         if(this.dead){
-            Asplode('bullet', this.body)
+            Asplode('enemy', this.body);
+            Asplode('smoke', this.body);
 
 
             playSound(sounds.boom, rnd(.98, 1.05), norm(this.body.xx, 0, Const.GAMEWIDTH), false);
@@ -72,15 +73,27 @@ function Enemy() {
             particlePool.get({
                 x: this.body.xx + this.body.radius - (Math.random() * this.body.radius * 2 ),
                 y: this.body.yy - this.body.radius - 2,
-                mapcollide: false,
-                gravity: -.03,
+                mapcollide: true,
+                gravity: -.04,
                 //dy: -this.body.dy,
                 //dx: //-this.body.dx * 0.5,
                 radius: 4,
                 color: "#a00",
-                life:.2
+                life:.4
             });
 
+        } else {
+            particlePool.get({
+                x: this.body.xx + this.body.radius - (Math.random() * this.body.radius * 2 ),
+                y: this.body.yy - this.body.radius - 2,
+                mapcollide: true,
+                gravity: -.03,
+                //dy: -this.body.dy,
+                //dx: //-this.body.dx * 0.5,
+                radius: 2,
+                color: "#080",
+                life:.4
+            });
         }
 
 
@@ -135,49 +148,57 @@ function Enemy() {
 
     Enemy.prototype.render = function (ctx) {
 
-            ctx.fillStyle = this.onFire ? this.angryFill : this.fill;
-            ctx.strokeStyle = this.onFire ? this.angryStroke : this.fill;
-            ctx.save();
-            ctx.translate(0.5, -3.5); // for crispy stroke rendering, and pulling them out of the floor
+        ctx.fillStyle = this.onFire ? this.angryFill : this.fill;
+        ctx.strokeStyle = this.onFire ? this.angryStroke : this.fill;
+        ctx.save();
+        ctx.translate(0.5, -3.5); // for crispy stroke rendering, and pulling them out of the floor
 
+        ctx.fillRect(
+            this.body.xx - this.body.radius,
+            this.body.yy - this.body.radius - this.stride,
+            (this.body.radius * 2),
+            (this.body.radius * 2) + this.stride);
+        ctx.strokeRect(
+            this.body.xx - this.body.radius,
+            this.body.yy - this.body.radius - this.stride,
+            this.body.radius * 2,
+            this.body.radius * 2) + this.stride;
+
+        ctx.restore();//post stroke, put back the .5 translation so future rendering isnt on subpixels
+
+        ctx.fillStyle = "#FFF";  //eyes
+        ctx.fillRect(
+            this.body.xx - 2,
+            this.body.yy - 4 - this.stride2,
+            this.onFire ? 2 : 1, 2);
+        ctx.fillRect(
+            this.body.xx + 2,
+            this.body.yy - 4 - this.stride2,
+            this.onFire ? 2 : 1, 2);
+        ctx.fillStyle = "#Fa0";
+
+        if (this.antennae) {
             ctx.fillRect(
-                this.body.xx - this.body.radius,
-                this.body.yy - this.body.radius - this.stride,
-                (this.body.radius * 2),
-                (this.body.radius * 2) + this.stride);
-            ctx.strokeRect(
-                this.body.xx - this.body.radius,
-                this.body.yy - this.body.radius - this.stride,
-                this.body.radius * 2,
-                this.body.radius * 2) + this.stride;
-
-            ctx.restore();//post stroke, put back the .5 translation so future rendering isnt on subpixels
-
-            ctx.fillStyle = "#FFF";  //eyes
+                this.body.xx - 3,
+                this.body.yy - 11 - this.stride2,
+                1,
+                5);
             ctx.fillRect(
-                this.body.xx - 2,
-                this.body.yy - 4 - this.stride2,
-                this.onFire ? 2: 1, 2);
-            ctx.fillRect(
-                this.body.xx + 2,
-                this.body.yy - 4 - this.stride2,
-                this.onFire ? 2: 1, 2);
-            ctx.fillStyle = "#Fa0";
+                this.body.xx + 3,
+                this.body.yy - 11 - this.stride2,
+                1,
+                5);
+        }
+        //debug render---------------
+        //ctx.save();
+        //ctx.lineWidth = '1px';
+        //ctx.strokeStyle = '#f0f';
+        //ctx.beginPath();
+        //ctx.arc(this.body.xx, this.body.yy, this.body.radius, 0, 2 * Math.PI, false);
+        //ctx.stroke();
+        //ctx.restore();
 
-            if (this.antennae) {
-                ctx.fillRect(
-                    this.body.xx - 3,
-                    this.body.yy - 11 - this.stride2,
-                    1,
-                    5);
-                ctx.fillRect(
-                    this.body.xx + 3,
-                    this.body.yy - 11 - this.stride2,
-                    1,
-                    5);
-            }
-            return this;
-        };
+    }
 
 
 };

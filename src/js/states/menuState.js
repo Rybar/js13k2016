@@ -2,13 +2,12 @@
 states.menu = {
 
     onenter: function(event, from, to){
-        if(event == 'ready'){
-            //titlesong=playSound(sounds.titlesong, true);
-        }
+        if(event == 'ready') titlesong=playSound(sounds.titlesong, 1, 0, true);
+
     },
 
     onexit: function(event, from, to){
-        //if(event == 'play') titlesong.sound.stop();
+        if(event == 'play') titlesong.sound.stop();
     },
 
     render: function(){
@@ -51,7 +50,7 @@ states.menu = {
             ctx: ctxui,
             x: Const.GAMEWIDTH/2,
             y: 150,
-            text: "WASD / ARROWS: MOVE\nSPACE: SHOOT\nPRESS S TO PLAY",
+            text: "A+D/ARROWS: MOVE\nSPACE/Z: SHOOT   X:JUMP\nPRESS Z TO PLAY",
             hspacing: 2,
             vspacing: 2,
             halign: 'center',
@@ -64,12 +63,9 @@ states.menu = {
     },
 
     update: function(){
-        if(Key.isDown(Key.r)) {
-            if(fsm.current)fsm.reset();
-        }
 
-        if(Key.isDown(Key.s)) {
-            ctx.fillStyle = "#00ff00";
+        if(Key.isDown(Key.z)) {
+
             if(fsm.current == 'menu') fsm.play();
         }
         var p = 2;
