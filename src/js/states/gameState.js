@@ -4,6 +4,8 @@ states.game = {
 
     onenter: function(event, from, to){
 
+        if(isFirefox)particlePool.init();
+
         switch(from) {
 
             case 'menu':
@@ -25,7 +27,7 @@ states.game = {
                 score = 0;
 
                 player.body.setCoords(Const.GAMEWIDTH/2, 100);
-                song = playSound(sounds.song, 1, 0, false);
+                song = playSound(sounds.song, 1, 0, true);
 
                 enemyPool.init();
                 particlePool.init();
@@ -62,7 +64,7 @@ states.game = {
             glitch: Const.GLITCH
         });
         ctxbg.fillStyle = "#111";
-        ctxbg.globalCompositeOperation = 'screen';
+        if(!isFirefox)ctxbg.globalCompositeOperation = 'screen';
         Txt.text({
             ctx: ctxbg,
             x: 10,
@@ -115,10 +117,6 @@ states.game = {
             color: "#a20",
             life: .8,
         });
-
-        //Const.GLITCH.ych += .00001;
-        //Const.GLITCH.xch += .00001;
-        //Const.GLITCH.yamt = 5;
 
         enemySpawnTimer -= step;
         //console.log(enemySpawnTimer)
@@ -185,7 +183,8 @@ states.game = {
 
         }
 //--------------------------------------------------------
-        if(Entity.prototype.overlaps(player.body, glitchbox.body)){
+//------------glitchbox-player check--------------------------
+    if(Entity.prototype.overlaps(player.body, glitchbox.body)){
             glitchbox.die();
             player.currentGun = player.makeGun();
         }

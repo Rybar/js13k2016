@@ -29,6 +29,7 @@ states.menu = {
             render: 1,
         });
         ctxui.fillStyle = '#cc0';
+
         Txt.text({
             ctx: ctxui,
             x: Const.GAMEWIDTH/2,
@@ -43,6 +44,7 @@ states.menu = {
             render: 1,
             glitch: { xch:.1, xamt: 10, ych:0, yamt:0}
         });
+
 
         ctxui.save();
         ctxui.fillStyle = "#fff";
@@ -68,23 +70,26 @@ states.menu = {
 
             if(fsm.current == 'menu') fsm.play();
         }
-        var p = 2;
-        while(p--){
-            particlePool.get({
-                x: Math.random() * Const.GAMEWIDTH,
-                y: 220,
-                mapcollide: false,
-                collides: false,
-                gravity: -.03,
-                //dy: -this.body.dy,
-                //dx: //-this.body.dx * 0.5,
-                radius: rnd(2,20),
-                color: "rgba(0,40,40, 1)",
-                stroke: "green",
-                life: 5
-            });
+        if(!isFirefox){
+            var p = 2;
+            while(p--){
 
+                particlePool.get({
+
+                    x: Math.random() * Const.GAMEWIDTH,
+                    y: 220,
+                    mapcollide: false,
+                    collides: false,
+                    gravity: -.03,
+                    radius: rnd(2,20),
+                    color: "rgba(20,0,40, 1)",
+                    life: 5
+
+                });
+
+            }
         }
+
 
         particlePool.use();
 

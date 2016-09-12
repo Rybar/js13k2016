@@ -1,10 +1,16 @@
-# js13k 2016
-Starter repository for JS13k, a set of tools for developing a JS game and keeping it under 13kb
+# Super Glitch Box
 
-Run `grunt build` (or the `grunt watch` task) to build the project normally. Run `grunt build-compress` to uglify/minify
- all source js/css/html, which will then be compressed into a .zip file.
- 
-run 'grunt server' to start up livereload.
+An homage/clone of the amazing Super Crate Box, created for JS13k 2016.
+
+Features:
+
+procedurally generated weapon behavior
+crazy particles
+Original music
+Stereo positional sounds
+
+
+I have tested in Chrome and Firefox. Makes heavy use of the web audio API and canvas,
 
 
 

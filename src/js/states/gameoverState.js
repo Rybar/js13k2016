@@ -3,7 +3,9 @@
  */
 states.gameover = {
     onenter: function(event, from, to){
+
         gameOverCountdown = 15;
+        playSound(sounds.gameover, 1, 0, false);
 
     },
 
@@ -44,7 +46,7 @@ states.gameover = {
 
         });
 
-        ctxui.fillStyle = '#fff';
+        ctxui.fillStyle = '#bbb';
         Txt.text({
             ctx: ctxui,
             x: Const.GAMEWIDTH/2,
@@ -65,31 +67,6 @@ states.gameover = {
     update: function(){
         if(gameOverCountdown > 0)gameOverCountdown -= .5;
 
-        //particlePool.use();
-        //
-        //var p = 2;
-        //while(p--){
-        //    particlePool.get({
-        //        x: Math.random() * Const.GAMEWIDTH,
-        //        y: 220,
-        //        mapcollide: false,
-        //        collides: false,
-        //        gravity: -.03,
-        //        //dy: -this.body.dy,
-        //        //dx: //-this.body.dx * 0.5,
-        //        radius: rnd(2,20),
-        //        color: "rgba(0,0,0,.5)",
-        //        life: 5,
-        //        ctx: ctxfg
-        //    });
-        //
-        //}
-
-        //if(Key.isDown(Key.r)) {
-        //
-        //    if(fsm.current)fsm.reset();
-        //
-        //}
         if(Key.isDown(Key.x)){
 
             if(fsm.current == 'gameover')fsm.play();

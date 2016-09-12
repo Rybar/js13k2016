@@ -75,6 +75,7 @@ Glitchbox =  function(opt) {
         this.bump = .5;
         score++
         Const.GLITCH.ych += .005;
+        playSound(sounds.glitchget, rnd(.98, 1.02), norm(this.body.xx, 0, Const.GAMEWIDTH), false);
         Asplode('glitchbox', this.body);
         //console.log(this.locations);
         var loc = this.locations[Math.floor(rnd(0, this.locations.length - 1))];

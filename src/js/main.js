@@ -6,6 +6,9 @@ var CONSTRUCTOR = 'constructor'; //some crazy byte-saving trick I don't grok.
 
 var score = 0;
 
+var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+console.log('firefox? : ' + isFirefox);
+
 var stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom);
@@ -88,7 +91,7 @@ var ctxcomp = comp.getContext('2d');
 //ctxcomp.imageSmoothingEnabled = false;
 //ctxcomp.mozImageSmoothingEnabled = false;
 
-var mosaic = makeMosaic();
+if(!isFirefox)var mosaic = makeMosaic();
 
 function makeMosaic(){ //totally stealing from deepnight here.
     var c = document.createElement('canvas');
@@ -268,16 +271,6 @@ initAudio = function() {
         sounds.loaded++;
         sounds.boom = buffer;
     });
-    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound4);
-    soundGen.createAudioBuffer(147+24, function(buffer) {
-        sounds.loaded++;
-        sounds.es4 = buffer;
-    });
-    soundGen = new sonantx.SoundGenerator(Assets.sounds.engineSound5);
-    soundGen.createAudioBuffer(147+24, function(buffer) {
-        sounds.loaded++;
-        sounds.es5 = buffer;
-    });
     //console.log('rendering music');
     soundGen = new sonantx.MusicGenerator(Assets.song);
     soundGen.createAudioBuffer(function (buffer) {
@@ -288,6 +281,18 @@ initAudio = function() {
     soundGen = new sonantx.MusicGenerator(Assets.titlesong);
     soundGen.createAudioBuffer(function (buffer) {
         sounds.titlesong = buffer;
+        sounds.loaded++;
+    });
+
+    soundGen = new sonantx.MusicGenerator(Assets.gameover);
+    soundGen.createAudioBuffer(function (buffer) {
+        sounds.gameover = buffer;
+        sounds.loaded++;
+    });
+
+    soundGen = new sonantx.MusicGenerator(Assets.glitchget);
+    soundGen.createAudioBuffer(function (buffer) {
+        sounds.glitchget = buffer;
         sounds.loaded++;
     });
 
@@ -346,14 +351,16 @@ function loop() {
     );
     finalctx.restore();
     finalctx.save();
-
+if(!isFirefox){
     finalctx.globalCompositeOperation = 'overlay';
     finalctx.drawImage(mosaic.canvas, 0,0);
+}
+
 
     finalctx.restore();
 
 
-    //ctx.globalCompositeOperation = 'source-over';
+    finalctx.globalCompositeOperation = 'source-over';
 
 
     stats.end();

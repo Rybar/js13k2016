@@ -89,7 +89,7 @@ function Particle() {
 
             case 'glitch':
                 ctx.save();
-                ctx.globalCompositeOperation = 'screen';
+                if(!isFirefox)ctx.globalCompositeOperation = 'screen';
                 ctx.fillStyle = '#' + rndTxt('5678890ABCDE',3);
                 ctx.strokeStyle = this.stroke;
                 var rad = this.body.radius * (this.remaining / this.life);
@@ -128,13 +128,15 @@ function Particle() {
 
             default:
                 ctx.save();
-                ctx.globalCompositeOperation = 'screen';
+                if(!isFirefox)ctx.globalCompositeOperation = 'screen';
                 ctx.fillStyle = this.color || '#fff'
                 ctx.strokeStyle = this.stroke;
                 var rad = this.body.radius * (this.remaining / this.life);
                 ctx.fillRect(
                     b.xx, b.yy - rad, rad * 2, rad * 2
                 );
+                ctx.globalCompositeOperation = 'source-over';
+
                 ctx.restore();
                 break;
 
