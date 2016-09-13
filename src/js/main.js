@@ -10,9 +10,9 @@ var paused = false;
 var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 console.log('firefox? : ' + isFirefox);
 
-var stats = new Stats();
-stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild(stats.dom);
+//var stats = new Stats();
+//stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+//document.body.appendChild(stats.dom);
 var ALL = [],
     fps = 60,
     step = 1 / fps,
