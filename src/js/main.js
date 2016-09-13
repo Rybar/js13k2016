@@ -5,6 +5,7 @@ var PROTO = 'prototype';
 var CONSTRUCTOR = 'constructor'; //some crazy byte-saving trick I don't grok.
 
 var score = 0;
+var paused = false;
 
 var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 console.log('firefox? : ' + isFirefox);
@@ -187,7 +188,7 @@ function init() {
             {name: 'load', from: 'init', to: 'boot'},
             {name: 'ready', from: 'boot', to: 'menu'},
             {name: 'play', from: ['menu', 'gameover'], to: 'game'},
-            {name: 'lose', from: 'game', to: 'gameover'},
+            {name: 'lose', from: ['game', 'gameover'], to: 'gameover'},
             {name: 'reset', from: ['init', 'boot', 'menu', 'gameover', 'game'], to: 'boot'},
         ],
 
@@ -222,6 +223,12 @@ function init() {
         Key.onKeydown(event);
         // console.log('key pressed');
     }, false);
+    window.addEventListener('blur', function (event) {
+        paused = true;
+    }, false);
+    window.addEventListener('focus', function (event) {
+        paused = false;
+    }, false);
 
     //Fire up the state machine
     fsm.load();
@@ -237,7 +244,7 @@ function timestamp() {
 initAudio = function() {
 
     sounds.loaded = 0;
-    sounds.total = 7;
+    sounds.total = 8;
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     audioCtx = new AudioContext;
 
@@ -246,6 +253,7 @@ initAudio = function() {
         sounds.loaded++;
         sounds.jump = buffer;
     });
+
     soundGen = new sonantx.SoundGenerator(Assets.sounds.shoot);
     soundGen.createAudioBuffer(147, function(buffer) {
         sounds.loaded++;
@@ -255,6 +263,11 @@ initAudio = function() {
     soundGen.createAudioBuffer(147, function(buffer) {
         sounds.loaded++;
         sounds.boom = buffer;
+    });
+    soundGen = new sonantx.SoundGenerator(Assets.sounds.sizzle);
+    soundGen.createAudioBuffer(147, function(buffer) {
+        sounds.loaded++;
+        sounds.sizzle = buffer;
     });
     //console.log('rendering music');
     soundGen = new sonantx.MusicGenerator(Assets.song);
@@ -305,50 +318,73 @@ function playSound(buffer, playbackRate, pan, loop) {
 
 function loop() {
 
-    stats.begin();
+    if(paused){
+        ctxui.fillStyle = 'rgba(0,0,0, 0.5)';
+        ctxui.fillRect(0,0, Const.GAMEWIDTH, Const.GAMEHEIGHT);
+        ctxui.fillStyle = '#0c0';
+        Txt.text({
+            ctx: ctxui,
+            x: Const.GAMEWIDTH /2,
+            y: Const.GAMEHEIGHT / 2,
+            text: 'PAUSED',
+            hspacing: 5,
+            vspacing: 0,
+            halign: 'center',
+            valign: 'center',
+            scale: 5,
+            snap: 1,
+            render: 1,
+            glitch: Const.GLITCH
+        });
 
-    now = timestamp();
 
-    dt += Math.min(1, (now - last) / 1000);
-
+    } else {
 
 
-    states[fsm.current].render(ctxfg);
+        //stats.begin();
 
-    while (dt > step) {
-        dt -= step;
-        states[fsm.current].update(step);
+        now = timestamp();
+
+        dt += Math.min(1, (now - last) / 1000);
+
+
+        states[fsm.current].render(ctxfg);
+
+        while (dt > step) {
+            dt -= step;
+            states[fsm.current].update(step);
+        }
+        last = now;
+
     }
-    last = now;
 
 
+        ctxcomp.drawImage(bg, 0, 0); //composite our canvas layers together
+        ctxcomp.drawImage(fg, 0, 0);
+        ctxcomp.drawImage(ui, 0, 0);
+        finalctx.save();
+        finalctx.fillStyle = "black";
+        finalctx.fillRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
+        finalctx.drawImage(
+            comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
+            0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
+        );
+        finalctx.restore();
+        finalctx.save();
+        if (!isFirefox) {
+            finalctx.globalCompositeOperation = 'overlay';
+            finalctx.drawImage(mosaic.canvas, 0, 0);
+        }
 
 
-    ctxcomp.drawImage(bg, 0,0); //composite our canvas layers together
-    ctxcomp.drawImage(fg, 0,0);
-    ctxcomp.drawImage(ui, 0,0);
-    finalctx.save();
-    finalctx.fillStyle = "black";
-    finalctx.fillRect(0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE); //erase -if bg is 100% opaque, maybe able to nix this step in the future
-    finalctx.drawImage(
-        comp, 0, 0, Const.GAMEWIDTH, Const.GAMEHEIGHT, //source
-        0, 0, Const.GAMEWIDTH * Const.SCALE, Const.GAMEHEIGHT * Const.SCALE //destination, scaled 3x
-    );
-    finalctx.restore();
-    finalctx.save();
-if(!isFirefox){
-    finalctx.globalCompositeOperation = 'overlay';
-    finalctx.drawImage(mosaic.canvas, 0,0);
-}
+        finalctx.restore();
 
 
-    finalctx.restore();
+        finalctx.globalCompositeOperation = 'source-over';
 
 
-    finalctx.globalCompositeOperation = 'source-over';
+        //stats.end();
 
-
-    stats.end();
 
     requestAnimationFrame(loop);
 

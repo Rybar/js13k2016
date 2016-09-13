@@ -14,6 +14,7 @@ function Enemy() {
 
     Enemy.prototype.spawn = function (opt) {
         this.inUse = true;
+        this.sizzled = false;
         this.body.radius = Math.floor(rnd(3,9));
 
         this.body.dead = false;
@@ -126,6 +127,11 @@ function Enemy() {
             this.body.setCoords(Const.GAMEWIDTH/2, -5);
             this.bump = .9;
             this.onFire = true;
+            this.sizzled = true;
+        }
+        if (this.sizzled){
+            playSound(sounds.sizzle, 1, 0, false);
+            this.sizzled = false;
         }
 
 
@@ -190,6 +196,7 @@ function Enemy() {
                 5);
         }
         //debug render---------------
+
         //ctx.save();
         //ctx.lineWidth = '1px';
         //ctx.strokeStyle = '#f0f';
@@ -197,7 +204,6 @@ function Enemy() {
         //ctx.arc(this.body.xx, this.body.yy, this.body.radius, 0, 2 * Math.PI, false);
         //ctx.stroke();
         //ctx.restore();
-
     }
 
 

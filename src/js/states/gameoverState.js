@@ -74,8 +74,8 @@ states.gameover = {
         }
 
         if(Key.isDown(Key.s)){
-            window.open('https://twitter.com/intent/tweet?text=I%20just%20collected%20' + score +
-                '%20glitches%20in%20Super%20Glitch%20Box%20%23js13k%20http%3A%2F%2Fbit.ly%2F2c7P6pm', '_self');
+            window.open('https://twitter.com/intent/tweet?text=text%3DI%20just%20collected%20' + score +
+                '%20glitches%20in%20Super%20Glitch%20Box%2C%20A%20%23js13k%20game%20by%20%40ryanmalm%20%20http%3A%2F%2Fbit.ly%2F2c7P6pm', '_self');
         }
 
     }

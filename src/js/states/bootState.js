@@ -36,6 +36,7 @@ states.boot = {
             'RETICULATING SPLINES...',
             'MESSAGE 42',
             'STIRRING THE PARTICLE POOL...',
+            'STIRRING THE PARTICLE POOL...',
             'BREEDING BADDIES...',
             'READY. PRESS X TO CONTINUE'];
 
